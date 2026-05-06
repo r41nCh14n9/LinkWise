@@ -21,13 +21,13 @@ Analyzes requirements and generates system analysis artifacts including:
 
 **In Copilot Chat:**
 ```
-/sa [Your requirements or project plan]
+/sa [Your requirements or analysis scope]
 
 Examples:
 - /sa Analyze these requirements and create a requirement-code mapping
-- /sa Document non-functional requirements for the LinkWise core system
-- /sa Reverse-engineer the existing authentication system and create system analysis docs
-- /sa Decompose the payment module requirements into SA artifacts
+- /sa Document non-functional requirements for the system
+- /sa Reverse-engineer the existing authentication system
+- /sa Decompose the module requirements into analysis artifacts
 ```
 
 ## Structured Documentation Workflow (Doc-Coauthoring)
@@ -92,23 +92,17 @@ npm install -g docx
 2. **Convert to Word** using Node.js with the docx library:
 
 ```javascript
-// requirements.js - Example
-const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell } = require('docx');
+// Create a generic requirements confirmation document
+const { Document, Packer, Paragraph, TextRun, HeadingLevel } = require('docx');
 const fs = require('fs');
 
 const doc = new Document({
   sections: [{
-    properties: {
-      page: {
-        size: { width: 12240, height: 15840 },  // US Letter
-        margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 }
-      }
-    },
     children: [
-      new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun("需求確認文件")] }),
-      new Paragraph({ children: [new TextRun("LinkWise 項目 - 2024")] }),
+      new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun("Requirements Confirmation Document")] }),
+      new Paragraph({ children: [new TextRun("Project: [Project Name] - [Date]")] }),
       new Paragraph({ children: [new TextRun("")] }),
-      new Paragraph({ children: [new TextRun("需求摘要和確認細節...")] }),
+      new Paragraph({ children: [new TextRun("Document your requirements and confirmation details...")] }),
       // Add more sections here
     ]
   }]
@@ -116,7 +110,7 @@ const doc = new Document({
 
 Packer.toBuffer(doc).then(buffer => {
   fs.writeFileSync("Requirements_Confirmation.docx", buffer);
-  console.log("✅ Document created: Requirements_Confirmation.docx");
+  console.log("✅ Document created");
 });
 ```
 

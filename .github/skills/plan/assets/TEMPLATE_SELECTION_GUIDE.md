@@ -8,13 +8,13 @@
 
 | 時間 | 推薦模板 | 理由 |
 |------|--------|------|
-| **< 2個月** | 🏃 Agile/Sprint | 快速迭代，無需複雜的長期規劃 |
-| **2-6個月** | 📋 Standard | 中等複雜度，需要清晰的階段但有彈性 |
-| **> 6個月** | 🏗️ Waterfall | 大型複雜，需要正式的分階段控制 |
+| < 2個月 | 🏃 Agile/Sprint | 快速迭代，無需複雜的長期規劃 |
+| 2-6個月 | 📋 Standard | 中等複雜度，需要清晰的階段但有彈性 |
+| > 6個月 | 🏗️ Waterfall | 大型複雜，需要正式的分階段控制 |
 
 **例子：**
-- LinkWise UI 改版（1個月）→ **Agile/Sprint**
-- 支付模組重構（4個月）→ **Standard**
+- UI 改版（1個月）→ **Agile/Sprint**
+- 模組重構（4個月）→ **Standard**
 - 系統遷移專案（8個月）→ **Waterfall**
 
 ---
@@ -29,7 +29,7 @@
 | **混合 (Hybrid)** | 📋 Standard | 既有結構又保持彈性 |
 
 **例子：**
-- LinkWise 採用 Scrum（2週 Sprint）→ **Agile/Sprint**
+- 新功能開發（2週 Sprint）→ **Agile/Sprint**
 - 基礎設施建設→ **Waterfall**
 - 維護更新 → **Agile/Sprint**
 
@@ -90,7 +90,7 @@ START: 新需求
 
 ---
 
-## 🎬 LinkWise 實際場景
+## 🎬 實際場景示例
 
 ### 情景 1：新功能開發
 

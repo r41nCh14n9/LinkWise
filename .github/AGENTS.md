@@ -1,11 +1,11 @@
 ---
 name: agents
-description: "Registry of custom agents for LinkWise project workflow"
+description: "Registry of custom agents for project workflow"
 ---
 
-# LinkWise Custom Agents
+# Custom Agents
 
-This document lists all custom agents available for the LinkWise project. These agents are specialized for different phases of the project development workflow.
+This document lists all custom agents available for your projects. These agents are specialized for different phases of the development workflow.
 
 ## Available Agents
 
@@ -35,16 +35,16 @@ This document lists all custom agents available for the LinkWise project. These 
 
 ## Workflow Integration
 
-The agents work together across the LinkWise development workflow:
+The agents work together across your development workflow:
 
 ```
-DRAFT 
+IDEA/DRAFT
   ↓
 PLAN (Plan Agent)
   ↓
 Requirements Gathering
   ↓
-SA (SA Agent) → Requirement-Code Mapping, NFR Docs, System Analysis
+SA (SA Agent) → Requirements Analysis, NFR Docs, System Analysis
   ↓
 SD (SD Agent) → Architecture, Components, Data Model, API Design
   ↓
@@ -59,10 +59,10 @@ To invoke a specific agent in VS Code:
 3. The specialized agent will handle your request with its domain expertise
 
 Example prompts:
-- `/plan Generate a project roadmap for LinkWise 2.0`
-- `/sa Create a requirement-code mapping for the authentication module`
-- `/sd Design the system architecture for LinkWise`
-- `/test Create an integration test plan for the payment module`
+- `/plan Generate a project roadmap and phased plan`
+- `/sa Create a requirement-code mapping document`
+- `/sd Design the system architecture`
+- `/test Create an integration test plan`
 
 ## Future Extensions
 

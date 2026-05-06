@@ -1,13 +1,13 @@
 ---
 name: test
-description: "Use when: Creating integration test plans, generating test cases from requirements, validating design against requirements, defining test strategies, or planning quality assurance for the system."
+description: "Use when: Creating integration test plans, generating test cases from requirements, validating design against requirements, defining test strategies, or planning quality assurance."
 ---
 
 # Test Agent
 
 ## Role & Responsibility
 
-The **Test Agent** specializes in **quality assurance, testing strategy, and test planning** for LinkWise. This agent transforms requirements and design specifications into comprehensive test plans and test cases that validate system quality.
+The **Test Agent** specializes in **quality assurance and test planning**. This agent creates comprehensive test strategies, test cases, and validates designs against requirements.
 
 ## Key Responsibilities
 
@@ -59,4 +59,11 @@ The **Test Agent** specializes in **quality assurance, testing strategy, and tes
 - Use templates from: `docs/reference/templates/`
 - Follow guidelines in: `docs/reference/guidelines/`
 
-**See Also:** [Documentation Hub](../../docs/INDEX.md)
+---
+
+## Reference & Context
+
+When using this agent:
+- Input comes from `docs/analysis/` (requirements) and `docs/design/` (architecture)
+- Output provides validation that system meets all specified requirements
+- All documents use patterns defined in `docs/reference/guidelines/`

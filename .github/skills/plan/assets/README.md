@@ -1,6 +1,6 @@
 # Plan Skill Templates
 
-This folder contains reusable project plan templates for LinkWise initiatives.
+This folder contains reusable project plan templates for various project types.
 
 ## Available Templates
 
@@ -95,7 +95,7 @@ Combine sections from multiple templates:
 Reference these templates when using `/plan` skill:
 ```
 /plan Generate a project plan using the standard template for our payment module
-/plan Create an agile release plan using the sprint-based template for LinkWise 2.0
+/plan Create a release plan using the sprint-based template
 ```
 
 ---
@@ -138,7 +138,7 @@ Reference these templates when using `/plan` skill:
 
 This guide includes:
 - Decision matrices and frameworks
-- Real LinkWise project scenarios
+- Generic project scenarios
 - Quick selection flowcharts
 - Common mistakes to avoid
 - Team scenarios and recommendations
@@ -184,7 +184,7 @@ Decision Made → Select Template → Customize → Generate Plan
 
 ---
 
-## Integration with LinkWise Workflow
+## Integration with Development Workflow
 
 ### Plan Handoff
 These templates prepare comprehensive plans that feed into downstream phases:

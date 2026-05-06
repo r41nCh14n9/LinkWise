@@ -1,6 +1,6 @@
 ---
 name: test
-description: "Use when: Creating integration test plans, generating test cases from requirements, validating design against requirements, defining test strategies, or planning quality assurance for the system."
+description: "Use when: Creating integration test plans, generating test cases from requirements, validating design against requirements, defining test strategies, or planning quality assurance."
 ---
 
 # Test Skill
@@ -24,15 +24,15 @@ Generates test and QA artifacts including:
 /test [Your requirements or design specifications]
 
 Examples:
-- /test Create an integration test plan for the payment module
-- /test Generate test cases from the requirements and design specifications
+- /test Create an integration test plan for the module
+- /test Generate test cases from requirements and design specifications
 - /test Validate the design against all functional and non-functional requirements
-- /test Define test strategy and coverage approach for LinkWise
+- /test Define test strategy and coverage approach
 ```
 
 ## Web Application Testing with Playwright
 
-This skill includes automated browser testing capabilities for LinkWise frontend components using Playwright and the official Anthropic webapp-testing patterns (bundled locally).
+This skill includes automated browser testing capabilities using Playwright and standard webapp-testing patterns.
 
 ### Quick Start
 
@@ -44,18 +44,18 @@ playwright install chromium
 
 **2. Run tests with managed server lifecycle:**
 
-Single server (e.g., LinkWise frontend):
+Single application server:
 ```bash
 python .github/skills/test/scripts/with_server.py \
-  --server "cd src/linkwise-front && npm run dev" --port 3000 \
+  --server "[your-build-command]" --port [port]\
   -- python test_app.py
 ```
 
-Multiple servers (e.g., backend + frontend):
+Multiple servers (backend + frontend):
 ```bash
 python .github/skills/test/scripts/with_server.py \
-  --server "cd src/linkwise-core && npm run dev" --port 5000 \
-  --server "cd src/linkwise-front && npm run dev" --port 3000 \
+  --server "[backend-build]" --port [backend-port] \
+  --server "[frontend-build]" --port [frontend-port] \
   -- python e2e_test.py
 ```
 
@@ -73,7 +73,7 @@ with sync_playwright() as p:
     
     # Interact with UI
     page.click('button:has-text("Login")')
-    page.fill('input[name="email"]', 'test@linkwise.com')
+    page.fill('input[name="email"]', 'test@example.com')
     page.fill('input[name="password"]', 'password123')
     page.click('button:has-text("Submit")')
     

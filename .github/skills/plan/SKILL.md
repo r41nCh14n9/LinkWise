@@ -1,11 +1,11 @@
 ---
 name: plan
-description: "Use when: Creating project plans, generating phased roadmaps, breaking down project phases, estimating timelines, and organizing project structure for the LinkWise initiative."
+description: "Use when: Creating project plans, generating phased roadmaps, breaking down project phases, estimating timelines, and organizing project structure."
 ---
 
 # Plan Skill
 
-Generate comprehensive project plans, roadmaps, and phased workflows for LinkWise initiatives.
+Generate comprehensive project plans, roadmaps, and phased workflows.
 
 ## What This Skill Does
 
@@ -20,12 +20,12 @@ Transforms DRAFT documents and project ideas into structured, actionable project
 
 **In Copilot Chat:**
 ```
-/plan [Your project idea or DRAFT document]
+/plan [Your project idea or requirements document]
 
 Examples:
-- /plan Generate a detailed project roadmap for LinkWise 2.0 based on our DRAFT
-- /plan Create a phased breakdown for the payment module implementation using the standard template
-- /plan Estimate effort and timeline for the authentication system redesign
+- /plan Generate a detailed project roadmap based on our requirements
+- /plan Create a phased breakdown for the module implementation
+- /plan Estimate effort and timeline for system redesign
 - /plan Generate an agile sprint plan for the next release
 ```
 
@@ -78,56 +78,53 @@ For large, complex projects with sequential phases:
 
 ---
 
-## How to Customize Templates
+## Using Templates for Your Project
 
-### Quick Start
-1. Choose the appropriate template based on your project type
-2. Copy template content into your plan document
-3. Replace `[PLACEHOLDERS]` with your actual data
-4. Customize sections to match your project needs
-5. Share with stakeholders for feedback
+All templates are available in `assets/` folder. When chosen by the Plan Agent:
+
+1. The agent selects the appropriate template based on your project characteristics
+2. Template content is customized with your project details
+3. Placeholders are replaced with actual project information
+4. Output is saved to `docs/plans/` for team reference
 
 ### Template Selection Guide
 
-```
-Is your project iterative or sequential?
-├─ Iterative (2-4 week cycles)        → Use Agile/Sprint template
-├─ Sequential phases                   → Use Waterfall template  
-└─ Mixed/Flexible                      → Use Standard template
+See complete selection logic in: `assets/TEMPLATE_SELECTION_GUIDE.md`
 
-For enterprise/regulatory projects    → Use Phase-Gate Waterfall
-For business applications             → Use Standard or Agile
-For research/uncertain requirements   → Use Agile/Sprint
+**Quick Reference:**
+- **Iterative projects** (2-4 week cycles) → **Agile/Sprint template**
+- **Sequential projects** (phases) → **Phase-Gate Waterfall template**
+- **Mixed/Flexible projects** → **Standard template**
 ```
 
 **Need a detailed, interactive guide?** See [TEMPLATE_SELECTION_GUIDE.md](./assets/TEMPLATE_SELECTION_GUIDE.md) for:
 - Decision matrices and 3-dimensional analysis
-- Real LinkWise project scenarios  
+- Generic project scenarios
 - Quick reference flowchart
 - Common selection mistakes
 - Team scenarios checklist
 
 ### Customization Examples
 
-**Example 1: Payment Module Project**
+**Example 1: Standard Module Project**
 ```
 Base Template: Standard Project Plan
 Customizations:
-- Add Payment Gateway Integration to Phase 1
-- Include PCI compliance checklist
-- Add 15% contingency for security testing
+- Add module-specific requirements to Phase 1
+- Include compliance/security considerations
+- Add 15% contingency for testing
 ```
 
-**Example 2: LinkWise 2.0 Release**
+**Example 2: Release Cycle**
 ```
 Base Template: Agile/Sprint Plan
 Customizations:
 - Set 3-sprint release cycle
-- Define 20-point team velocity
-- Add feature prioritization from product roadmap
+- Define team velocity based on capacity
+- Add feature prioritization strategy
 ```
 
-**Example 3: Legacy System Migration**
+**Example 3: Complex Migration**
 ```
 Base Template: Phase-Gate Waterfall
 Customizations:

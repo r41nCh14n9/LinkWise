@@ -24,10 +24,10 @@ Creates technical design artifacts from system analysis including:
 /sd [Your system analysis or requirements]
 
 Examples:
-- /sd Design the system architecture based on the SA documentation
-- /sd Create component design and data models for the payment module
-- /sd Generate API specifications from the requirements analysis
-- /sd Design the database schema for LinkWise core system
+- /sd Design the system architecture based on the analysis
+- /sd Create component design and data models
+- /sd Generate API specifications from requirements
+- /sd Design the database schema and relationships
 ```
 
 ## Output

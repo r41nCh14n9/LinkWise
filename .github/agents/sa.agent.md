@@ -7,7 +7,7 @@ description: "Use when: Analyzing requirements, creating requirement-code mappin
 
 ## Role & Responsibility
 
-The **System Analysis Agent** specializes in **requirements analysis and documentation** for LinkWise. This agent transforms project plans and requirements into comprehensive system analysis documentation that bridges planning and design phases.
+The **System Analysis Agent** specializes in **requirements analysis and documentation**. This agent transforms project plans and requirements into comprehensive system analysis documentation that bridges planning and design phases.
 
 ## Key Responsibilities
 
@@ -55,4 +55,11 @@ The **System Analysis Agent** specializes in **requirements analysis and documen
 - Use templates from: `docs/reference/templates/`
 - Follow guidelines in: `docs/reference/guidelines/`
 
-**See Also:** [Documentation Hub](../../docs/INDEX.md)
+---
+
+## Reference & Context
+
+When using this agent:
+- Input comes from `docs/reference/requirements/` (requirements gathering outputs)
+- Output becomes input for System Design Agent
+- All documents use patterns defined in `docs/reference/guidelines/`

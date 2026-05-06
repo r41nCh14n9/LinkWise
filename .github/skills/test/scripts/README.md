@@ -1,6 +1,6 @@
 # Test Scripts
 
-This folder contains helper scripts for automated testing in LinkWise.
+This folder contains helper scripts for automated testing.
 
 ## with_server.py
 
@@ -14,12 +14,12 @@ This folder contains helper scripts for automated testing in LinkWise.
 
 ```bash
 # Single server
-python with_server.py --server "cd src/linkwise-front && npm run dev" --port 3000 -- python test.py
+python with_server.py --server "[your-build-command]" --port [port] -- python test.py
 
 # Multiple servers
 python with_server.py \
-  --server "cd src/linkwise-core && npm run dev" --port 5000 \
-  --server "cd src/linkwise-front && npm run dev" --port 3000 \
+  --server "[backend-build]" --port [backend-port] \
+  --server "[frontend-build]" --port [frontend-port] \
   -- python e2e_test.py
 ```
 

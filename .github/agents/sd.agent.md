@@ -7,7 +7,7 @@ description: "Use when: Designing system architecture, creating component models
 
 ## Role & Responsibility
 
-The **System Design Agent** specializes in **technical architecture and system design** for LinkWise. This agent transforms system analysis documentation into detailed technical designs that guide implementation and testing phases.
+The **System Design Agent** specializes in **technical architecture and system design**. This agent transforms system analysis documentation into detailed technical designs that guide implementation and testing phases.
 
 ## Key Responsibilities
 
@@ -60,4 +60,11 @@ The **System Design Agent** specializes in **technical architecture and system d
 - Use templates from: `docs/reference/templates/`
 - Follow guidelines in: `docs/reference/guidelines/`
 
-**See Also:** [Documentation Hub](../../docs/INDEX.md)
+---
+
+## Reference & Context
+
+When using this agent:
+- Input comes from `docs/analysis/` (System Analysis outputs)
+- Output becomes reference for Test Agent and development teams
+- All documents use patterns defined in `docs/reference/guidelines/`
