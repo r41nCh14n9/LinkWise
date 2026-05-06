@@ -58,8 +58,7 @@ This `.github/` structure implements a **generic, reusable framework** that work
 │                                                                  │
 │  plans/              reference/ (consumed by all agents)         │
 │  ├── active/         ├── guidelines/                             │
-│  ├── completed/      │   ├── GUIDELINES-Tech-Stack-v1.md        │
-│  └── templates/      │   ├── GUIDELINES-Naming-Convention-v1.md │
+│  └── completed/      │   ├── GUIDELINES-Tech-Stack-v1.md        │
 │                      │   ├── GUIDELINES-Coding-Standards-v1.md  │
 │  analysis/           │   ├── GUIDELINES-Dev-Workflow-v1.md      │
 │  ├── requirements/   │   └── GUIDELINES-Performance-Security-v1 │
@@ -69,15 +68,18 @@ This `.github/` structure implements a **generic, reusable framework** that work
 │  ├── architecture/   │   └── (other templates)                  │
 │  ├── components/     └── examples/                              │
 │  ├── apis/               ├── good/                              │
-│  ├── database/           └── anti-patterns/                     │
-│  └── diagrams/                                                  │
-│                      implementation/                            │
-│  review/             ├── plans/                                 │
-│  ├── code-reviews/   ├── code-records/                          │
-│  ├── design-reviews/ ├── review-guides/                         │
-│  └── req-reviews/    └── integration-guides/                    │
+│  └── database/           └── anti-patterns/                     │
 │                                                                  │
-│  testing/            (all outputs from agents)                  │
+│  implementation/     (all outputs from agents)                  │
+│  ├── code-records/                                              │
+│  └── integration-guides/                                        │
+│                                                                  │
+│  review/                                                        │
+│  ├── code-reviews/                                              │
+│  ├── design-reviews/                                            │
+│  └── requirements-reviews/                                      │
+│                                                                  │
+│  testing/                                                       │
 │  ├── integration/                                               │
 │  ├── user/                                                      │
 │  └── unit/                                                      │
@@ -107,6 +109,7 @@ This `.github/` structure implements a **generic, reusable framework** that work
 ---
 
 ### System-Level Data Flow
+```
 Reference Agent (Maintains Standards)
     ↓ produces
     docs/reference/
@@ -227,12 +230,23 @@ Examples:  ← Generic examples, not project-specific
 ### Layer 4: `docs/[output-folder]/` (Agent Outputs)
 
 **What it contains:**
-- `docs/plans/` - Output from Plan Agent
-- `docs/analysis/` - Output from SA Agent (requirements analysis, system analysis)
-- `docs/design/` - Output from SD Agent (architecture, components, APIs, database)
+- `docs/plans/` - Output from Plan Agent (project timeline, roadmaps)
+- `docs/analysis/` - Output from SA Agent (requirements analysis, system analysis, flow diagrams)
+- `docs/design/` - Output from SD Agent (architecture, components, APIs, database schemas, and embedded diagrams)
+- `docs/implementation/` - Output from Development Agent (code records, integration guides)
+- `docs/review/` - Output from Review Agent (code reviews, design reviews, requirements reviews)
 - `docs/testing/` - Output from Test Agent (test plans, test cases)
 
 **Purpose:** Where each agent saves its generated content.
+
+**Diagram Strategy:** 
+- ✅ All diagrams are **embedded within SA/SD output documents** using Mermaid.js format
+- ✅ Diagram standards defined in `.github/skills/[agent]/assets/` (reusable across projects):
+  - Framework standards: `.github/skills/reference/assets/DIAGRAM-STANDARDS.md`
+  - SA diagram specs: `.github/skills/sa/assets/DIAGRAM-STANDARDS.md`
+  - SD diagram specs: `.github/skills/sd/assets/DIAGRAM-STANDARDS.md`
+- ✅ No separate `/diagrams/` folder
+- ✅ Supported types: Architecture, Component, Data Flow, Sequence, State, Database/ER, Process Flows, Deployment
 
 **Data Flow Between Agents:**
 ```
@@ -244,6 +258,12 @@ SA Agent
 SD Agent
     ↓ reads docs/analysis/ + docs/plans/ as context
     ↓ output → docs/design/
+Development Agent
+    ↓ reads docs/design/ as input
+    ↓ output → docs/implementation/
+Review Agent
+    ↓ reads docs/implementation/ + docs/design/ as context
+    ↓ output → docs/review/
 Test Agent
     ↓ reads docs/plans/ + docs/design/ as context
     ↓ output → docs/testing/
@@ -251,7 +271,68 @@ Test Agent
 
 ---
 
-## 🔀 Making This Reusable
+## � Diagram Integration Pattern
+
+All diagrams are **embedded directly within SA and SD output documents**, not stored in separate files.
+
+### Why This Approach?
+
+- ✅ **Unified Context:** Diagrams stay with their explanatory content
+- ✅ **Single Source of Truth:** No sync issues between text and diagrams
+- ✅ **Easier Maintenance:** Update documentation once, diagram updates with it
+- ✅ **Version Control Friendly:** Markdown + diagrams tracked together
+- ✅ **Framework Portable:** No external dependencies on image files
+
+### Diagram Specification
+
+**All diagrams use Mermaid.js format** with standardized definitions and templates in `.github/skills/[agent]/assets/`:
+
+**Framework & Standards:**
+- 📋 `.github/skills/reference/assets/DIAGRAM-STANDARDS.md` - Core framework (supported types, naming, styling)
+- 📋 `.github/skills/sa/assets/DIAGRAM-STANDARDS.md` - SA agent specifications (sequence, process, state diagrams)
+- 📋 `.github/skills/sd/assets/DIAGRAM-STANDARDS.md` - SD agent specifications (architecture, component, ER, deployment)
+
+**Supported Diagram Types:**
+| Type | Format | Used In | Defined In |
+|------|--------|---------|------------|
+| Architecture | Mermaid graph TD/LR | SD docs | `.github/skills/sd/` |
+| Sequence/Flow | Mermaid sequenceDiagram | SA docs | `.github/skills/sa/` |
+| Data Model | Mermaid erDiagram | SD docs | `.github/skills/sd/` |
+| State Transitions | Mermaid stateDiagram | SA/SD docs | `.github/skills/sa/` or `.github/skills/sd/` |
+| Process Flows | Mermaid flowchart | SA docs | `.github/skills/sa/` |
+| Deployment | Mermaid graph TD | SD docs | `.github/skills/sd/` |
+
+### Example: Embedded Diagram in SD Output
+
+```markdown
+# Component: Authentication Service
+
+## Architecture
+
+\`\`\`mermaid
+graph TD
+    A[Login API] --> B[Auth Service]
+    B --> C[Token Manager]
+    C --> D[JWT Store]
+\`\`\`
+
+## Database Schema
+
+\`\`\`mermaid
+erDiagram
+    USERS ||--o{ SESSIONS : has
+    USERS {
+        int user_id PK
+        string email
+    }
+\`\`\`
+```
+
+**Key Principle:** SA/SD agents generate markdown files that **include diagram definitions**, not image files.
+
+---
+
+## �🔀 Making This Reusable
 
 ### For Another Project
 
