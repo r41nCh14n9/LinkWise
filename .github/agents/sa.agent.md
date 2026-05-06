@@ -41,25 +41,33 @@ The **System Analysis Agent** specializes in **requirements analysis and documen
 **Save all outputs to:** `docs/analysis/`
 
 **Subfolder Guidelines:**
-- `docs/analysis/requirements/` - Analyzed requirements documents
-- `docs/analysis/nfr/` - Non-functional requirements
-- `docs/analysis/mapping/` - Requirement-to-code mappings
-- `docs/analysis/reverse-engineering/` - Legacy system analysis
+
+*Always produce:*
+- `docs/analysis/requirements/` - Functional and non-functional requirements
+
+*Produce when applicable:*
+- `docs/analysis/system-analysis/` - System architecture analysis and design decisions
+  - Existing system architecture documentation (for integration/legacy scenarios)
+  - Current system architecture reference (for development team guidance)
+  - Reverse engineering analysis (when analyzing legacy systems)
+  - Architecture decision records (for future reference and maintenance)
 
 **Naming Convention:**
 - `[DocumentType]-[Subject]-[Version].md`
-- Example: `REQUIREMENTS-Payment-API-v2.md`
+- Example: `REQUIREMENTS-Payment-API-v2.md` or `ARCHITECTURE-ANALYSIS-Current-System-v1.md`
 
 **Input References:**
-- Read input from: `docs/reference/requirements/` and `docs/DRAFT.md`
-- Use templates from: `docs/reference/templates/`
-- Follow guidelines in: `docs/reference/guidelines/`
+- Read input from: `docs/_reference/requirements/`
+- Use templates from: `docs/_reference/templates/`
+- Follow guidelines in: `docs/_reference/guidelines/`
 
 ---
 
 ## Reference & Context
 
 When using this agent:
-- Input comes from `docs/reference/requirements/` (requirements gathering outputs)
+- Input comes from `docs/_reference/requirements/` (requirements gathering outputs)
 - Output becomes input for System Design Agent
-- All documents use patterns defined in `docs/reference/guidelines/`
+- All documents use patterns defined in `docs/_reference/guidelines/`
+- Always produce requirements analysis
+- Produce system analysis to document current system state, architecture decisions, and enable future updates

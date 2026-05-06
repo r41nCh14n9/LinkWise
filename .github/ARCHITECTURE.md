@@ -56,14 +56,12 @@ This `.github/` structure implements a **generic, reusable framework** that work
 │  analysis/                                                 │
 │  ├── requirements/          design/                        │
 │  ├── nfr/                   ├── architecture/              │
-│  ├── mapping/               ├── components/                │
-│  └── reverse-engineering/   ├── apis/                      │
-│                             ├── database/                  │
-│  tests/                     └── diagrams/                  │
-│  ├── plans/                                                │
-│  ├── cases/                                                │
-│  ├── integration/                                          │
-│  └── scripts/                                              │
+│  └── system-analysis/       ├── components/                │
+│                             ├── apis/                      │
+│  testing/                   ├── database/                  │
+│  ├── integration/           └── diagrams/                  │
+│  ├── user/                                                 │
+│  └── unit/                                              │
 │                                                             │
 │  Project-specific content & team outputs                   │
 │                                                             │
@@ -72,7 +70,56 @@ This `.github/` structure implements a **generic, reusable framework** that work
 
 ---
 
-## 🔄 Data Flow Pattern
+## � Agent Output Definitions
+
+### Plan Agent
+**Output Location:** `docs/plans/`
+**Produces:**
+- Project timeline and milestones
+- Resource allocation plans
+- Risk assessments
+
+### SA (System Analysis) Agent
+**Output Location:** `docs/analysis/`
+**Produces (Minimum):**
+- `requirements/` - Functional and non-functional requirements
+- `requirements/` - Requirements specification documents
+
+**Produces (Optional):**
+- `system-analysis/` - System architecture analysis and design decisions documentation
+  - Existing system architecture analysis (for integration scenarios)
+  - Current system architecture snapshot (for reference during development)
+  - Reverse engineering documents (when analyzing legacy systems)
+  - Architecture decision records (ADR) for future reference and updates
+
+**Decision Rule:**
+- ✅ Always produce requirements analysis
+- ✅ Produce system analysis IF:
+  - Working with existing systems or doing integrations
+  - Analyzing legacy architectures for migration
+  - Need to document current system state as reference for development teams
+  - Want to maintain architecture decision records for future updates
+- ✅ Skip system analysis IF: purely greenfield project with no existing systems and no documentation needs
+
+### SD (System Design) Agent
+**Output Location:** `docs/design/`
+**Produces:**
+- `architecture/` - System architecture design
+- `components/` - Component specifications
+- `apis/` - API specifications
+- `database/` - Database schema design
+- `diagrams/` - Architecture and interaction diagrams
+
+### Test Agent
+**Output Location:** `docs/testing/`
+**Produces:**
+- `integration/` - Integration test plans and cases
+- `user/` - User acceptance test cases
+- `unit/` - Unit test documentation (optional)
+
+---
+
+
 
 ```
 Agent Usage (Generic)
@@ -155,11 +202,26 @@ Examples:  ← Generic examples, not project-specific
 
 **What it contains:**
 - `docs/plans/` - Output from Plan Agent
-- `docs/analysis/` - Output from SA Agent
-- `docs/design/` - Output from SD Agent
-- `docs/tests/` - Output from Test Agent
+- `docs/analysis/` - Output from SA Agent (requirements analysis, system analysis)
+- `docs/design/` - Output from SD Agent (architecture, components, APIs, database)
+- `docs/testing/` - Output from Test Agent (test plans, test cases)
 
 **Purpose:** Where each agent saves its generated content.
+
+**Data Flow Between Agents:**
+```
+Plan Agent
+    ↓ output → docs/plans/
+SA Agent
+    ↓ reads docs/plans/ as context
+    ↓ output → docs/analysis/
+SD Agent
+    ↓ reads docs/analysis/ + docs/plans/ as context
+    ↓ output → docs/design/
+Test Agent
+    ↓ reads docs/plans/ + docs/design/ as context
+    ↓ output → docs/testing/
+```
 
 ---
 

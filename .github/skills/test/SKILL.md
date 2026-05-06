@@ -107,11 +107,10 @@ The skill generates:
 - **QA Documentation** - Acceptance criteria and test scenarios
 - **Metrics & Coverage** - Quality metrics and test coverage analysis
 
-**📁 Save to:** `docs/tests/`
-- Test plans: `docs/tests/plans/`
-- Test cases: `docs/tests/cases/`
-- Integration tests: `docs/tests/integration/`
-- Test scripts: `docs/tests/scripts/`
+**📁 Save to:** `docs/testing/`
+- Integration tests: `docs/testing/integration/`
+- User acceptance tests: `docs/testing/user/`
+- Unit test docs: `docs/testing/unit/`
 
 **📖 Reference:** [Documentation Hub](../../../docs/INDEX.md)
 

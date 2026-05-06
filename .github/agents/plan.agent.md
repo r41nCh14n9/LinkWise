@@ -43,12 +43,12 @@ The **Plan Agent** specializes in **project planning and roadmap generation**. T
 
 **Naming Convention:**
 - `[ProjectName]-[Phase]-[Date].md`
-- Follow patterns documented in: `docs/reference/guidelines/naming-conventions.md`
+- Follow patterns documented in: `docs/_reference/guidelines/naming-conventions.md`
 
 **Input References:**
-- Project requirements: `docs/reference/requirements/`
+- Project requirements: `docs/_reference/requirements/`
 - Available templates: `docs/plans/templates/`
-- Planning guidelines: `docs/reference/guidelines/planning-guidelines.md`
+- Planning guidelines: `docs/_reference/guidelines/planning-guidelines.md`
 
 ---
 

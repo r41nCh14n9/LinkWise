@@ -160,10 +160,18 @@ The skill generates:
 - **需求確認書.docx** - Formal requirements confirmation letter
 
 **📁 Save to:** `docs/analysis/`
+
+*Always produce:*
 - Requirements analysis: `docs/analysis/requirements/`
-- NFR analysis: `docs/analysis/nfr/`
-- Requirement-code mapping: `docs/analysis/mapping/`
-- Reverse engineering: `docs/analysis/reverse-engineering/`
+- NFR analysis: `docs/analysis/requirements/`
+
+*Produce when applicable:*
+- System analysis: `docs/analysis/system-analysis/`
+- Use for:
+  - Existing system architecture documentation (integration scenarios)
+  - Current system reference during development (greenfield projects)
+  - Reverse engineering analysis (legacy system migration)
+  - Architecture decision records (future reference and updates)
 
 **📖 Reference:** [Documentation Hub](../../../docs/INDEX.md)
 

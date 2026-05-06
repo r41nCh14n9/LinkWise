@@ -41,13 +41,12 @@ The **Test Agent** specializes in **quality assurance and test planning**. This 
 
 ## Output Location
 
-**Save all outputs to:** `docs/tests/`
+**Save all outputs to:** `docs/testing/`
 
 **Subfolder Guidelines:**
-- `docs/tests/plans/` - Test plans and strategies
-- `docs/tests/cases/` - Test case documentation
-- `docs/tests/integration/` - Integration test specifications
-- `docs/tests/scripts/` - Test automation scripts
+- `docs/testing/integration/` - Integration test plans and cases
+- `docs/testing/user/` - User acceptance test cases
+- `docs/testing/unit/` - Unit test documentation (optional)
 
 **Naming Convention:**
 - `[TestType]-[Module]-[Version].md`
@@ -56,8 +55,8 @@ The **Test Agent** specializes in **quality assurance and test planning**. This 
 **Input References:**
 - Read analysis from: `docs/analysis/`
 - Read design from: `docs/design/`
-- Use templates from: `docs/reference/templates/`
-- Follow guidelines in: `docs/reference/guidelines/`
+- Use templates from: `docs/_reference/templates/`
+- Follow guidelines in: `docs/_reference/guidelines/`
 
 ---
 
@@ -66,4 +65,4 @@ The **Test Agent** specializes in **quality assurance and test planning**. This 
 When using this agent:
 - Input comes from `docs/analysis/` (requirements) and `docs/design/` (architecture)
 - Output provides validation that system meets all specified requirements
-- All documents use patterns defined in `docs/reference/guidelines/`
+- All documents use patterns defined in `docs/_reference/guidelines/`

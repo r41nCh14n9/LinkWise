@@ -57,8 +57,8 @@ The **System Design Agent** specializes in **technical architecture and system d
 
 **Input References:**
 - Read analysis from: `docs/analysis/`
-- Use templates from: `docs/reference/templates/`
-- Follow guidelines in: `docs/reference/guidelines/`
+- Use templates from: `docs/_reference/templates/`
+- Follow guidelines in: `docs/_reference/guidelines/`
 
 ---
 
@@ -67,4 +67,4 @@ The **System Design Agent** specializes in **technical architecture and system d
 When using this agent:
 - Input comes from `docs/analysis/` (System Analysis outputs)
 - Output becomes reference for Test Agent and development teams
-- All documents use patterns defined in `docs/reference/guidelines/`
+- All documents use patterns defined in `docs/_reference/guidelines/`
