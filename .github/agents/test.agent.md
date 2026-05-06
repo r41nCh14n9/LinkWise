@@ -55,8 +55,10 @@ The **Test Agent** specializes in **quality assurance and test planning**. This 
 **Input References:**
 - Read analysis from: `docs/analysis/`
 - Read design from: `docs/design/`
-- Use templates from: `docs/_reference/templates/`
-- Follow guidelines in: `docs/_reference/guidelines/`
+- Read reviews from: `docs/review/` (code/design/requirements reviews)
+- Read implementation from: `docs/implementation/integration-guides/`
+- Use templates from: `docs/reference/templates/`
+- Follow guidelines in: `docs/reference/guidelines/`
 
 ---
 
@@ -65,4 +67,4 @@ The **Test Agent** specializes in **quality assurance and test planning**. This 
 When using this agent:
 - Input comes from `docs/analysis/` (requirements) and `docs/design/` (architecture)
 - Output provides validation that system meets all specified requirements
-- All documents use patterns defined in `docs/_reference/guidelines/`
+- All documents use patterns defined in `docs/reference/guidelines/`

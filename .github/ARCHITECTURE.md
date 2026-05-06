@@ -25,52 +25,95 @@ This `.github/` structure implements a **generic, reusable framework** that work
 ## 🏗️ Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    .github/ (Generic Framework)             │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  agents/                    skills/                        │
-│  ├── plan.agent.md          ├── plan/                      │
-│  ├── sa.agent.md            ├── sa/                        │
-│  ├── sd.agent.md            ├── sd/                        │
-│  └── test.agent.md          └── test/                      │
-│                                                             │
-│  All reference docs/ folder for:                           │
-│  - Output location: docs/plans/, docs/analysis/, etc.      │
-│  - Input references: docs/reference/                       │
-│  - Guidelines: docs/reference/guidelines/                  │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-                            ↕
-                    (references only)
-                            ↕
-┌─────────────────────────────────────────────────────────────┐
-│                   docs/ (Project Content)                   │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  plans/                     reference/                     │
-│  ├── active/                ├── requirements/              │
-│  ├── completed/             ├── guidelines/                │
-│  └── templates/             ├── templates/                 │
-│                             └── examples/                  │
-│  analysis/                                                 │
-│  ├── requirements/          design/                        │
-│  ├── nfr/                   ├── architecture/              │
-│  └── system-analysis/       ├── components/                │
-│                             ├── apis/                      │
-│  testing/                   ├── database/                  │
-│  ├── integration/           └── diagrams/                  │
-│  ├── user/                                                 │
-│  └── unit/                                              │
-│                                                             │
-│  Project-specific content & team outputs                   │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────┐
+│                    .github/ (Generic Framework)                  │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  agents/                       skills/                          │
+│  ├── plan.agent.md             ├── plan/                        │
+│  ├── reference.agent.md        ├── reference/                   │
+│  ├── sa.agent.md               ├── sa/                          │
+│  ├── sd.agent.md               ├── sd/                          │
+│  ├── development.agent.md      ├── development/                 │
+│  ├── review.agent.md (NEW)     ├── review/ (NEW)               │
+│  └── test.agent.md             └── test/                        │
+│                                                                  │
+│  All reference docs/ folder for:                                │
+│  - Output location: docs/*/                                     │
+│  - Input references: docs/reference/                            │
+│  - Guidelines: docs/reference/guidelines/                       │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+                               ↕
+                       (references only)
+                               ↕
+┌──────────────────────────────────────────────────────────────────┐
+│                   docs/ (Project Content)                        │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  plans/              reference/ (consumed by all agents)         │
+│  ├── active/         ├── guidelines/                             │
+│  ├── completed/      │   ├── GUIDELINES-Tech-Stack-v1.md        │
+│  └── templates/      │   ├── GUIDELINES-Naming-Convention-v1.md │
+│                      │   ├── GUIDELINES-Coding-Standards-v1.md  │
+│  analysis/           │   ├── GUIDELINES-Dev-Workflow-v1.md      │
+│  ├── requirements/   │   └── GUIDELINES-Performance-Security-v1 │
+│  └── system-analysis/├── templates/                             │
+│                      │   ├── TEMPLATE-Component.ts              │
+│  design/             │   ├── TEMPLATE-Service.ts                │
+│  ├── architecture/   │   └── (other templates)                  │
+│  ├── components/     └── examples/                              │
+│  ├── apis/               ├── good/                              │
+│  ├── database/           └── anti-patterns/                     │
+│  └── diagrams/                                                  │
+│                      implementation/                            │
+│  review/             ├── plans/                                 │
+│  ├── code-reviews/   ├── code-records/                          │
+│  ├── design-reviews/ ├── review-guides/                         │
+│  └── req-reviews/    └── integration-guides/                    │
+│                                                                  │
+│  testing/            (all outputs from agents)                  │
+│  ├── integration/                                               │
+│  ├── user/                                                      │
+│  └── unit/                                                      │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## � Agent Output Definitions
+## 📊 Agent Output Definitions
+
+### Reference Agent
+**Output Location:** `docs/reference/`
+
+**Purpose:** Single source of truth for all project standards. Consumed by ALL other agents.
+
+**Produces:**
+
+1. **Guidelines** (`docs/reference/guidelines/`)
+   - `GUIDELINES-Tech-Stack-v*.md` - Technology stack and versions
+   - `GUIDELINES-Naming-Convention-v*.md` - Naming rules and file organization
+   - `GUIDELINES-Coding-Standards-v*.md` - Code style and quality standards
+   - `GUIDELINES-Development-Workflow-v*.md` - Git flow, CI/CD process
+   - `GUIDELINES-Performance-Security-v*.md` - Performance and security best practices
+   - `GUIDELINES-Architecture-Decisions-v*.md` - Architecture Decision Records (ADR)
+
+2. **Templates** (`docs/reference/templates/`)
+   - `TEMPLATE-Component.ts/tsx` - Component implementation template
+   - `TEMPLATE-Service.ts` - Business logic service template
+   - `TEMPLATE-Unit-Test.spec.ts` - Unit test template
+   - `TEMPLATE-Integration-Test.spec.ts` - Integration test template
+   - `TEMPLATE-API-Endpoint.ts` - REST API endpoint template
+   - `TEMPLATE-README.md` - Documentation template
+
+3. **Examples** (`docs/reference/examples/`)
+   - `examples/good/EXAMPLE-*.ts` - Reference implementations
+   - `examples/anti-patterns/ANTIPATTERN-*.ts` - What to avoid
+
+**Consumed By:** All other agents (Plan, SA, SD, Development, Test)
+
+---
 
 ### Plan Agent
 **Output Location:** `docs/plans/`
@@ -79,6 +122,11 @@ This `.github/` structure implements a **generic, reusable framework** that work
 - Resource allocation plans
 - Risk assessments
 
+**Input References:**
+- `docs/reference/guidelines/` (naming conventions, workflow guidelines)
+
+---
+
 ### SA (System Analysis) Agent
 **Output Location:** `docs/analysis/`
 **Produces (Minimum):**
@@ -86,20 +134,17 @@ This `.github/` structure implements a **generic, reusable framework** that work
 - `requirements/` - Requirements specification documents
 
 **Produces (Optional):**
-- `system-analysis/` - System architecture analysis and design decisions documentation
-  - Existing system architecture analysis (for integration scenarios)
-  - Current system architecture snapshot (for reference during development)
-  - Reverse engineering documents (when analyzing legacy systems)
-  - Architecture decision records (ADR) for future reference and updates
+- `system-analysis/` - System architecture analysis and design decisions
+  - Existing system architecture analysis (integration scenarios)
+  - Current system architecture snapshot (development reference)
+  - Reverse engineering documents (legacy system analysis)
+  - Architecture decision records (future reference and updates)
 
-**Decision Rule:**
-- ✅ Always produce requirements analysis
-- ✅ Produce system analysis IF:
-  - Working with existing systems or doing integrations
-  - Analyzing legacy architectures for migration
-  - Need to document current system state as reference for development teams
-  - Want to maintain architecture decision records for future updates
-- ✅ Skip system analysis IF: purely greenfield project with no existing systems and no documentation needs
+**Input References:**
+- `docs/reference/guidelines/` (tech stack, architecture guidelines)
+- `docs/plans/` (project context and timeline)
+
+---
 
 ### SD (System Design) Agent
 **Output Location:** `docs/design/`
@@ -110,12 +155,144 @@ This `.github/` structure implements a **generic, reusable framework** that work
 - `database/` - Database schema design
 - `diagrams/` - Architecture and interaction diagrams
 
+**Input References:**
+- `docs/reference/guidelines/` (design standards, performance/security)
+- `docs/analysis/` (requirements and system analysis)
+
+---
+
+### Development Agent
+**Output Location:** `docs/implementation/`
+
+**Purpose:** Transform requirements and designs into working code following all project standards.
+
+**Produces:**
+
+1. **Plans** (`docs/implementation/plans/`)
+   - `IMPL-PLAN-[Feature]-v*.md` - Implementation approach and breakdown
+   - `IMPL-PROGRESS-[Feature]-v*.md` - Progress tracking
+   - `IMPL-DECISIONS-[Feature]-v*.md` - Technical decisions
+
+2. **Code Records** (`docs/implementation/code-records/`)
+   - `CODE-[Component]-[Feature]-v*.md` - Implementation documentation
+   - Includes code snippets, patterns used, design decisions
+
+3. **Review Guides** (`docs/implementation/review-guides/`)
+   - `REVIEW-CHECKLIST-[Feature]-v*.md` - Code review checklist
+   - `CODE-REVIEW-GUIDE-[Feature]-v*.md` - Review guidance
+   - `QA-CHECKLIST-[Feature]-v*.md` - Quality assurance checklist
+
+4. **Integration Guides** (`docs/implementation/integration-guides/`)
+   - `INTEGRATION-GUIDE-[Feature]-v*.md` - Integration with system
+   - `SETUP-LOCAL-DEV-[Feature]-v*.md` - Local development setup
+   - `DEPLOYMENT-NOTES-[Feature]-v*.md` - Deployment considerations
+
+**Input References (ALL MANDATORY):**
+- `docs/reference/guidelines/` (ALL guidelines - strict adherence required)
+- `docs/reference/templates/` (Code templates)
+- `docs/reference/examples/` (Reference implementations)
+- `docs/design/` (Architecture and design specs)
+- `docs/analysis/requirements/` (Functional and non-functional requirements)
+- `docs/plans/active/` (Project context)
+
+**Key Characteristics:**
+- Must read ALL Reference Agent materials before code generation
+- Code must follow guidelines, templates, and standards exactly
+- Implementation traceable back to requirements and design
+- Produces comprehensive review materials for quality assurance
+- Documents all technical decisions and rationale
+
+---
+
+### Review Agent (NEW ✨)
+**Output Location:** `docs/review/`
+
+**Purpose:** Conduct comprehensive static analysis to verify code, design, and requirements compliance.
+
+**Produces:**
+
+1. **Code Reviews** (`docs/review/code-reviews/`)
+   - `CODE-REVIEW-[Component]-v*.md` - Code quality and standards compliance
+   - Includes findings, recommendations, and action items
+
+2. **Design Reviews** (`docs/review/design-reviews/`)
+   - `DESIGN-REVIEW-[Module]-v*.md` - Architecture and design validation
+   - Includes pattern verification, scalability, security assessment
+
+3. **Requirements Reviews** (`docs/review/requirements-reviews/`)
+   - `REQUIREMENTS-REVIEW-[Feature]-v*.md` - Requirements coverage and traceability
+   - Includes implementation status matrix, gaps identification
+
+**Input References:**
+- `docs/reference/guidelines/` (ALL guidelines - for compliance verification)
+- `docs/reference/examples/` (good practices and anti-patterns)
+- `docs/implementation/` (code records and implementation plans)
+- `docs/design/` (architecture and design specifications)
+- `docs/analysis/requirements/` (functional and non-functional requirements)
+
+**Key Characteristics:**
+- Conducts static analysis (no code execution)
+- References every finding back to specific guidelines
+- Provides actionable, concrete feedback
+- Creates traceability matrices for requirements
+- Generates compliance scores
+- Issues are classified (Critical/Major/Minor)
+
+---
+
 ### Test Agent
 **Output Location:** `docs/testing/`
 **Produces:**
 - `integration/` - Integration test plans and cases
 - `user/` - User acceptance test cases
 - `unit/` - Unit test documentation (optional)
+
+**Input References:**
+- `docs/reference/guidelines/` (testing guidelines, test templates)
+- `docs/design/` (design specifications for test planning)
+- `docs/review/` (review findings and issues for test planning)
+- `docs/implementation/integration-guides/` (integration test setup)
+
+---
+
+## 🔄 Complete Agent Data Flow
+
+```
+Reference Agent (Maintains Standards)
+    ↓ produces
+    docs/reference/
+    ├── guidelines/ (Tech stack, naming, coding standards, workflow, security/performance)
+    ├── templates/ (Code and test templates)
+    └── examples/ (Good implementations, anti-patterns)
+        ↓ consumed by all agents
+        ├────→ Plan Agent (workflow guidelines, naming conventions)
+        ├────→ SA Agent (tech stack, architecture guidelines)
+        ├────→ SD Agent (design standards, performance/security guidelines)
+        ├────→ Development Agent (MUST follow ALL guidelines strictly)
+        ├────→ Review Agent (guidelines for compliance verification)
+        └────→ Test Agent (testing guidelines, test templates)
+            ↓
+Plan Agent → docs/plans/ (project timeline)
+    ↓ provides context for
+SA Agent → docs/analysis/ (functional/non-functional requirements)
+    ↓ provides input for
+SD Agent → docs/design/ (architecture and specifications)
+    ↓ provides design for
+Development Agent → docs/implementation/ (working code & documentation)
+    ↓ provides implementation for
+Review Agent → docs/review/ (code/design/requirements reviews)
+    ├─ CODE-REVIEW-*.md (code compliance issues)
+    ├─ DESIGN-REVIEW-*.md (architecture issues)
+    └─ REQUIREMENTS-REVIEW-*.md (coverage gaps)
+    ↓ provides review feedback for
+Development Agent (v2) ← if issues found, iterates on fixes
+    OR
+Test Agent → docs/testing/ (test plans and cases)
+    ↓ provides test results for
+Team (approval/merge/deploy)
+    ↓
+    Complete end-to-end workflow with quality gates
+```
 
 ---
 

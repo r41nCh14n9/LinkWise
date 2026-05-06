@@ -57,17 +57,17 @@ The **System Analysis Agent** specializes in **requirements analysis and documen
 - Example: `REQUIREMENTS-Payment-API-v2.md` or `ARCHITECTURE-ANALYSIS-Current-System-v1.md`
 
 **Input References:**
-- Read input from: `docs/_reference/requirements/`
-- Use templates from: `docs/_reference/templates/`
-- Follow guidelines in: `docs/_reference/guidelines/`
+- Read input from: `docs/reference/requirements/`
+- Use templates from: `docs/reference/templates/`
+- Follow guidelines in: `docs/reference/guidelines/`
 
 ---
 
 ## Reference & Context
 
 When using this agent:
-- Input comes from `docs/_reference/requirements/` (requirements gathering outputs)
+- Input comes from `docs/reference/requirements/` (requirements gathering outputs)
 - Output becomes input for System Design Agent
-- All documents use patterns defined in `docs/_reference/guidelines/`
+- All documents use patterns defined in `docs/reference/guidelines/`
 - Always produce requirements analysis
 - Produce system analysis to document current system state, architecture decisions, and enable future updates
