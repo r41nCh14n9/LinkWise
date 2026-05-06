@@ -1,5 +1,10 @@
 # .github/ Agent-Skill Architecture
 
+> 📌 **Quick Navigation:**
+> - **Agent Details** → See [`.github/agents/`](./agents/) for complete agent definitions
+> - **How to Use** → See [`.github/skills/`](./skills/) for each agent's usage guide
+> - **System Architecture** → See this document for integration patterns
+
 ## 📐 Design Philosophy: Separating Framework from Content
 
 This `.github/` structure implements a **generic, reusable framework** that works independently from project-specific content. All project data is separated into `docs/` folder.
@@ -82,182 +87,26 @@ This `.github/` structure implements a **generic, reusable framework** that work
 
 ---
 
-## 📊 Agent Output Definitions
+## � Complete Agent Data Flow
 
-### Reference Agent
-**Output Location:** `docs/reference/`
+> **📌 Note:** Detailed agent specifications, inputs, and outputs are defined in `.github/agents/[agent-name].agent.md`
+> This section shows the system-level data flow and integration patterns.
 
-**Purpose:** Single source of truth for all project standards. Consumed by ALL other agents.
+### Agent Quick Reference
 
-**Produces:**
-
-1. **Guidelines** (`docs/reference/guidelines/`)
-   - `GUIDELINES-Tech-Stack-v*.md` - Technology stack and versions
-   - `GUIDELINES-Naming-Convention-v*.md` - Naming rules and file organization
-   - `GUIDELINES-Coding-Standards-v*.md` - Code style and quality standards
-   - `GUIDELINES-Development-Workflow-v*.md` - Git flow, CI/CD process
-   - `GUIDELINES-Performance-Security-v*.md` - Performance and security best practices
-   - `GUIDELINES-Architecture-Decisions-v*.md` - Architecture Decision Records (ADR)
-
-2. **Templates** (`docs/reference/templates/`)
-   - `TEMPLATE-Component.ts/tsx` - Component implementation template
-   - `TEMPLATE-Service.ts` - Business logic service template
-   - `TEMPLATE-Unit-Test.spec.ts` - Unit test template
-   - `TEMPLATE-Integration-Test.spec.ts` - Integration test template
-   - `TEMPLATE-API-Endpoint.ts` - REST API endpoint template
-   - `TEMPLATE-README.md` - Documentation template
-
-3. **Examples** (`docs/reference/examples/`)
-   - `examples/good/EXAMPLE-*.ts` - Reference implementations
-   - `examples/anti-patterns/ANTIPATTERN-*.ts` - What to avoid
-
-**Consumed By:** All other agents (Plan, SA, SD, Development, Test)
+| Agent | Definition | Skill Guide | Role |
+|-------|------------|-------------|------|
+| 🎯 **Reference** | [reference.agent.md](./agents/reference.agent.md) | [SKILL.md](./skills/reference/SKILL.md) | Foundation: Standards & Guidelines |
+| 📋 **Plan** | [plan.agent.md](./agents/plan.agent.md) | [SKILL.md](./skills/plan/SKILL.md) | Project Planning & Roadmaps |
+| 📊 **SA** | [sa.agent.md](./agents/sa.agent.md) | [SKILL.md](./skills/sa/SKILL.md) | Requirements Analysis |
+| 🏗️ **SD** | [sd.agent.md](./agents/sd.agent.md) | [SKILL.md](./skills/sd/SKILL.md) | System Design & Architecture |
+| 💻 **Development** | [development.agent.md](./agents/development.agent.md) | [SKILL.md](./skills/development/SKILL.md) | Feature Implementation |
+| ✨ **Review** | [review.agent.md](./agents/review.agent.md) | [SKILL.md](./skills/review/SKILL.md) | Code & Design Quality |
+| ✅ **Test** | [test.agent.md](./agents/test.agent.md) | [SKILL.md](./skills/test/SKILL.md) | Test Planning & QA |
 
 ---
 
-### Plan Agent
-**Output Location:** `docs/plans/`
-**Produces:**
-- Project timeline and milestones
-- Resource allocation plans
-- Risk assessments
-
-**Input References:**
-- `docs/reference/guidelines/` (naming conventions, workflow guidelines)
-
----
-
-### SA (System Analysis) Agent
-**Output Location:** `docs/analysis/`
-**Produces (Minimum):**
-- `requirements/` - Functional and non-functional requirements
-- `requirements/` - Requirements specification documents
-
-**Produces (Optional):**
-- `system-analysis/` - System architecture analysis and design decisions
-  - Existing system architecture analysis (integration scenarios)
-  - Current system architecture snapshot (development reference)
-  - Reverse engineering documents (legacy system analysis)
-  - Architecture decision records (future reference and updates)
-
-**Input References:**
-- `docs/reference/guidelines/` (tech stack, architecture guidelines)
-- `docs/plans/` (project context and timeline)
-
----
-
-### SD (System Design) Agent
-**Output Location:** `docs/design/`
-**Produces:**
-- `architecture/` - System architecture design
-- `components/` - Component specifications
-- `apis/` - API specifications
-- `database/` - Database schema design
-- `diagrams/` - Architecture and interaction diagrams
-
-**Input References:**
-- `docs/reference/guidelines/` (design standards, performance/security)
-- `docs/analysis/` (requirements and system analysis)
-
----
-
-### Development Agent
-**Output Location:** `docs/implementation/`
-
-**Purpose:** Transform requirements and designs into working code following all project standards.
-
-**Produces:**
-
-1. **Plans** (`docs/implementation/plans/`)
-   - `IMPL-PLAN-[Feature]-v*.md` - Implementation approach and breakdown
-   - `IMPL-PROGRESS-[Feature]-v*.md` - Progress tracking
-   - `IMPL-DECISIONS-[Feature]-v*.md` - Technical decisions
-
-2. **Code Records** (`docs/implementation/code-records/`)
-   - `CODE-[Component]-[Feature]-v*.md` - Implementation documentation
-   - Includes code snippets, patterns used, design decisions
-
-3. **Review Guides** (`docs/implementation/review-guides/`)
-   - `REVIEW-CHECKLIST-[Feature]-v*.md` - Code review checklist
-   - `CODE-REVIEW-GUIDE-[Feature]-v*.md` - Review guidance
-   - `QA-CHECKLIST-[Feature]-v*.md` - Quality assurance checklist
-
-4. **Integration Guides** (`docs/implementation/integration-guides/`)
-   - `INTEGRATION-GUIDE-[Feature]-v*.md` - Integration with system
-   - `SETUP-LOCAL-DEV-[Feature]-v*.md` - Local development setup
-   - `DEPLOYMENT-NOTES-[Feature]-v*.md` - Deployment considerations
-
-**Input References (ALL MANDATORY):**
-- `docs/reference/guidelines/` (ALL guidelines - strict adherence required)
-- `docs/reference/templates/` (Code templates)
-- `docs/reference/examples/` (Reference implementations)
-- `docs/design/` (Architecture and design specs)
-- `docs/analysis/requirements/` (Functional and non-functional requirements)
-- `docs/plans/active/` (Project context)
-
-**Key Characteristics:**
-- Must read ALL Reference Agent materials before code generation
-- Code must follow guidelines, templates, and standards exactly
-- Implementation traceable back to requirements and design
-- Produces comprehensive review materials for quality assurance
-- Documents all technical decisions and rationale
-
----
-
-### Review Agent (NEW ✨)
-**Output Location:** `docs/review/`
-
-**Purpose:** Conduct comprehensive static analysis to verify code, design, and requirements compliance.
-
-**Produces:**
-
-1. **Code Reviews** (`docs/review/code-reviews/`)
-   - `CODE-REVIEW-[Component]-v*.md` - Code quality and standards compliance
-   - Includes findings, recommendations, and action items
-
-2. **Design Reviews** (`docs/review/design-reviews/`)
-   - `DESIGN-REVIEW-[Module]-v*.md` - Architecture and design validation
-   - Includes pattern verification, scalability, security assessment
-
-3. **Requirements Reviews** (`docs/review/requirements-reviews/`)
-   - `REQUIREMENTS-REVIEW-[Feature]-v*.md` - Requirements coverage and traceability
-   - Includes implementation status matrix, gaps identification
-
-**Input References:**
-- `docs/reference/guidelines/` (ALL guidelines - for compliance verification)
-- `docs/reference/examples/` (good practices and anti-patterns)
-- `docs/implementation/` (code records and implementation plans)
-- `docs/design/` (architecture and design specifications)
-- `docs/analysis/requirements/` (functional and non-functional requirements)
-
-**Key Characteristics:**
-- Conducts static analysis (no code execution)
-- References every finding back to specific guidelines
-- Provides actionable, concrete feedback
-- Creates traceability matrices for requirements
-- Generates compliance scores
-- Issues are classified (Critical/Major/Minor)
-
----
-
-### Test Agent
-**Output Location:** `docs/testing/`
-**Produces:**
-- `integration/` - Integration test plans and cases
-- `user/` - User acceptance test cases
-- `unit/` - Unit test documentation (optional)
-
-**Input References:**
-- `docs/reference/guidelines/` (testing guidelines, test templates)
-- `docs/design/` (design specifications for test planning)
-- `docs/review/` (review findings and issues for test planning)
-- `docs/implementation/integration-guides/` (integration test setup)
-
----
-
-## 🔄 Complete Agent Data Flow
-
-```
+### System-Level Data Flow
 Reference Agent (Maintains Standards)
     ↓ produces
     docs/reference/
