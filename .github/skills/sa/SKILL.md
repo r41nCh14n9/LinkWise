@@ -165,6 +165,14 @@ The skill generates:
 - **需求確認文件.docx** - Professional Word requirements document
 - **需求確認書.docx** - Formal requirements confirmation letter
 
+**📁 Save to:** `docs/analysis/`
+- Requirements analysis: `docs/analysis/requirements/`
+- NFR analysis: `docs/analysis/nfr/`
+- Requirement-code mapping: `docs/analysis/mapping/`
+- Reverse engineering: `docs/analysis/reverse-engineering/`
+
+**📖 Reference:** [Documentation Hub](../../../docs/INDEX.md)
+
 ## Resources
 
 - **Doc-Coauthoring Workflow**: [Anthropic doc-coauthoring skill](https://github.com/anthropics/skills/tree/main/skills/doc-coauthoring)

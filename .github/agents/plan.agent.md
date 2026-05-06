@@ -31,3 +31,23 @@ The **Plan Agent** specializes in **project planning and roadmap generation** fo
 - Organizing requirements and work items
 - Defining project structure and governance
 - Estimating effort and managing scope
+
+## Output Location
+
+**Save all outputs to:** `docs/plans/`
+
+**Subfolder Guidelines:**
+- `docs/plans/active/` - Current active project plans
+- `docs/plans/completed/` - Archived/historical plans
+- `docs/plans/templates/` - Reusable plan templates
+
+**Naming Convention:**
+- `[ProjectName]-[Phase]-[Date].md`
+- Example: `LinkWise-2.0-Planning-Q2-2026.md`
+
+**Input References:**
+- Read requirements from: `docs/reference/requirements/`
+- Use templates from: `.github/skills/plan/assets/`
+- Reference guidelines in: `docs/reference/guidelines/`
+
+**See Also:** [Documentation Hub](../../docs/INDEX.md)

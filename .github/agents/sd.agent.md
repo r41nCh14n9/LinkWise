@@ -39,3 +39,25 @@ The **System Design Agent** specializes in **technical architecture and system d
 - Documenting design patterns and technical decisions
 - Preparing design specifications for development teams
 - Creating design reviews and architecture documentation
+
+## Output Location
+
+**Save all outputs to:** `docs/design/`
+
+**Subfolder Guidelines:**
+- `docs/design/architecture/` - System architecture designs
+- `docs/design/components/` - Component specifications
+- `docs/design/apis/` - API specifications
+- `docs/design/database/` - Database schema designs
+- `docs/design/diagrams/` - Architecture diagrams (Mermaid)
+
+**Naming Convention:**
+- `[ComponentType]-[ComponentName]-[Version].md`
+- Example: `API-SPEC-Authentication-v1.md`
+
+**Input References:**
+- Read analysis from: `docs/analysis/`
+- Use templates from: `docs/reference/templates/`
+- Follow guidelines in: `docs/reference/guidelines/`
+
+**See Also:** [Documentation Hub](../../docs/INDEX.md)

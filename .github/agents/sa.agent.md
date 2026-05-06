@@ -35,3 +35,24 @@ The **System Analysis Agent** specializes in **requirements analysis and documen
 - Reverse-engineering existing systems or legacy code
 - Creating requirement traceability and impact analysis
 - Preparing requirements for design phase
+
+## Output Location
+
+**Save all outputs to:** `docs/analysis/`
+
+**Subfolder Guidelines:**
+- `docs/analysis/requirements/` - Analyzed requirements documents
+- `docs/analysis/nfr/` - Non-functional requirements
+- `docs/analysis/mapping/` - Requirement-to-code mappings
+- `docs/analysis/reverse-engineering/` - Legacy system analysis
+
+**Naming Convention:**
+- `[DocumentType]-[Subject]-[Version].md`
+- Example: `REQUIREMENTS-Payment-API-v2.md`
+
+**Input References:**
+- Read input from: `docs/reference/requirements/` and `docs/DRAFT.md`
+- Use templates from: `docs/reference/templates/`
+- Follow guidelines in: `docs/reference/guidelines/`
+
+**See Also:** [Documentation Hub](../../docs/INDEX.md)

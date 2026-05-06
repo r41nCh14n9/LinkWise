@@ -40,6 +40,15 @@ The skill generates:
 - **Design Documentation** - Design rationale and pattern documentation
 - **Technology Stack** - Technology choices and architectural decisions
 
+**📁 Save to:** `docs/design/`
+- Architecture designs: `docs/design/architecture/`
+- Component specs: `docs/design/components/`
+- API specs: `docs/design/apis/`
+- Database schemas: `docs/design/database/`
+- Diagrams: `docs/design/diagrams/`
+
+**📖 Reference:** [Documentation Hub](../../../docs/INDEX.md)
+
 ## Related
 
 - [SD Agent](./../agents/sd.agent.md)

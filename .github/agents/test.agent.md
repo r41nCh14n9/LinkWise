@@ -38,3 +38,25 @@ The **Test Agent** specializes in **quality assurance, testing strategy, and tes
 - Planning quality assurance activities
 - Documenting acceptance criteria and test scenarios
 - Preparing test documentation for QA teams
+
+## Output Location
+
+**Save all outputs to:** `docs/tests/`
+
+**Subfolder Guidelines:**
+- `docs/tests/plans/` - Test plans and strategies
+- `docs/tests/cases/` - Test case documentation
+- `docs/tests/integration/` - Integration test specifications
+- `docs/tests/scripts/` - Test automation scripts
+
+**Naming Convention:**
+- `[TestType]-[Module]-[Version].md`
+- Example: `TEST-PLAN-Payment-Module-v1.md`
+
+**Input References:**
+- Read analysis from: `docs/analysis/`
+- Read design from: `docs/design/`
+- Use templates from: `docs/reference/templates/`
+- Follow guidelines in: `docs/reference/guidelines/`
+
+**See Also:** [Documentation Hub](../../docs/INDEX.md)
