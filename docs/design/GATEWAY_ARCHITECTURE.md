@@ -396,7 +396,6 @@ docker exec linkwise-nginx nginx -s reload
 ## 📚 相關資源
 
 - [DOCKER_GUIDE.md](DOCKER_GUIDE.md) - Docker 完整指南
-- [QUICKSTART.md](QUICKSTART.md) - 快速開始
 - [nginx/dev.conf](nginx/dev.conf) - 開發配置
 - [nginx/default.conf](nginx/default.conf) - 生產配置
 - [docker-compose.yml](docker-compose.yml) - Docker Compose 配置

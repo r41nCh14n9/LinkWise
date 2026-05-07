@@ -392,7 +392,6 @@ services:
 
 ## 📚 相關資源
 
-- [QUICKSTART.md](QUICKSTART.md) - 5 分鐘快速開始
 - [GATEWAY_ARCHITECTURE.md](GATEWAY_ARCHITECTURE.md) - 網關架構詳解
 - [docker-compose.yml](docker-compose.yml) - 預設配置
 - [docker-compose.dev.yml](docker-compose.dev.yml) - 開發環境配置
