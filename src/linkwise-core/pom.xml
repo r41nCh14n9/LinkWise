@@ -64,6 +64,12 @@
             <version>2.2.0</version>
         </dependency>
 
+        <!-- Health Check and Monitoring -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- Development Tools -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

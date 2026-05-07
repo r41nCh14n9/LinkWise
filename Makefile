@@ -1,5 +1,5 @@
 .PHONY: help dev prod stop down logs clean rebuild restart-all \
-	shell-frontend shell-backend shell-db db-reset
+	restart-all-dev restart-all-prod shell-frontend shell-backend shell-db db-reset
 
 # Default target
 .DEFAULT_GOAL := help
@@ -9,6 +9,11 @@ BLUE := \033[0;34m
 GREEN := \033[0;32m
 YELLOW := \033[0;33m
 NC := \033[0m
+
+# Compose file selection
+COMPOSE_DEV := -f docker-compose.dev.yml
+COMPOSE_PROD := -f docker-compose.prod.yml
+COMPOSE_FILE ?= $(COMPOSE_DEV)
 
 help: ## Display this help message
 	@echo -e "$(BLUE)LinkWise Docker Commands:$(NC)"
@@ -46,12 +51,12 @@ prod: setup ## Start production environment
 
 stop: ## Stop all services (keep data)
 	@echo -e "$(BLUE)Stopping all services...$(NC)"
-	docker-compose stop
+	docker-compose $(COMPOSE_FILE) stop
 	@echo -e "$(GREEN)[OK] All services stopped$(NC)"
 
 down: ## Stop and remove all containers (keep data)
 	@echo -e "$(BLUE)Stopping and removing containers...$(NC)"
-	docker-compose down
+	docker-compose $(COMPOSE_FILE) down
 	@echo -e "$(GREEN)[OK] Containers removed$(NC)"
 
 clean: ## Remove all containers, networks and volumes (DELETE all data)
@@ -59,7 +64,7 @@ clean: ## Remove all containers, networks and volumes (DELETE all data)
 	@read -p "Are you sure? (y/n) " -n 1 -r; \
 	echo ""; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		docker-compose down -v; \
+		docker-compose $(COMPOSE_FILE) down -v; \
 		echo -e "$(GREEN)[OK] All containers and volumes removed$(NC)"; \
 	else \
 		echo -e "$(BLUE)Cancelled$(NC)"; \
@@ -67,40 +72,43 @@ clean: ## Remove all containers, networks and volumes (DELETE all data)
 
 rebuild: ## Rebuild all images
 	@echo -e "$(BLUE)Rebuilding all images...$(NC)"
-	docker-compose build --no-cache
+	docker-compose $(COMPOSE_FILE) build --no-cache
 	@echo -e "$(GREEN)[OK] All images rebuilt$(NC)"
 
 logs: ## View logs from all services
-	docker-compose logs -f
+	docker-compose $(COMPOSE_FILE) logs -f
 
 logs-frontend: ## View frontend logs
-	docker-compose logs -f frontend
+	docker-compose $(COMPOSE_FILE) logs -f frontend
 
 logs-backend: ## View backend logs
-	docker-compose logs -f backend
+	docker-compose $(COMPOSE_FILE) logs -f backend
 
 logs-db: ## View database logs
-	docker-compose logs -f database
+	docker-compose $(COMPOSE_FILE) logs -f database
+
+logs-nginx: ## View nginx logs
+	docker-compose $(COMPOSE_FILE) logs -f nginx
 
 ps: ## Display all container status
-	docker-compose ps
+	docker-compose $(COMPOSE_FILE) ps
 
 shell-frontend: ## Enter frontend container shell
-	docker-compose exec frontend sh
+	docker-compose $(COMPOSE_FILE) exec frontend sh
 
 shell-backend: ## Enter backend container shell
-	docker-compose exec backend sh
+	docker-compose $(COMPOSE_FILE) exec backend sh
 
 shell-db: ## Enter database container psql
-	docker-compose exec database psql -U linkwise_user -d linkwise_db
+	docker-compose $(COMPOSE_FILE) exec database psql -U linkwise_user -d linkwise_db
 
 db-reset: ## Reset database
 	@echo -e "$(YELLOW)WARNING: This will delete all database data!$(NC)"
 	@read -p "Are you sure? (y/n) " -n 1 -r; \
 	echo ""; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		docker-compose down -v; \
-		docker-compose up -d; \
+		docker-compose $(COMPOSE_FILE) down -v; \
+		docker-compose $(COMPOSE_FILE) up -d; \
 		echo -e "$(GREEN)[OK] Database reset$(NC)"; \
 	else \
 		echo -e "$(BLUE)Cancelled$(NC)"; \
@@ -108,36 +116,55 @@ db-reset: ## Reset database
 
 restart: ## Restart all services
 	@echo -e "$(BLUE)Restarting all services...$(NC)"
-	docker-compose restart
+	docker-compose $(COMPOSE_FILE) restart
 	@echo -e "$(GREEN)[OK] All services restarted$(NC)"
 
 restart-frontend: ## Restart frontend
-	docker-compose restart frontend
+	docker-compose $(COMPOSE_FILE) restart frontend
 
 restart-backend: ## Restart backend
-	docker-compose restart backend
+	docker-compose $(COMPOSE_FILE) restart backend
 
 restart-db: ## Restart database
-	docker-compose restart database
+	docker-compose $(COMPOSE_FILE) restart database
 
-restart-all: ## Clean, rebuild, and restart all services (full reset)
-	@echo -e "$(YELLOW)WARNING: This will rebuild all images and restart all services!$(NC)"
+restart-all-dev: ## Clean, rebuild, and restart all services in DEV mode (full reset)
+	@echo -e "$(YELLOW)WARNING: This will rebuild all images and restart all services in DEV mode!$(NC)"
 	@read -p "Are you sure? (y/n) " -n 1 -r; \
 	echo ""; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
 		echo -e "$(BLUE)Cleaning...$(NC)"; \
-		docker-compose down -v; \
+		docker-compose -f docker-compose.dev.yml down -v; \
 		echo -e "$(BLUE)Building...$(NC)"; \
-		docker-compose build --no-cache; \
+		docker-compose -f docker-compose.dev.yml build --no-cache; \
 		echo -e "$(BLUE)Starting services...$(NC)"; \
-		docker-compose up -d; \
-		echo -e "$(GREEN)[OK] All services cleaned, rebuilt, and restarted$(NC)"; \
+		docker-compose -f docker-compose.dev.yml up -d; \
+		echo -e "$(GREEN)[OK] All services cleaned, rebuilt, and restarted in DEV mode$(NC)"; \
 	else \
 		echo -e "$(BLUE)Cancelled$(NC)"; \
 	fi
 
+restart-all-prod: ## Clean, rebuild, and restart all services in PROD mode (full reset)
+	@echo -e "$(YELLOW)WARNING: This will rebuild all images and restart all services in PROD mode!$(NC)"
+	@read -p "Are you sure? (y/n) " -n 1 -r; \
+	echo ""; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		echo -e "$(BLUE)Cleaning...$(NC)"; \
+		docker-compose -f docker-compose.prod.yml down -v; \
+		echo -e "$(BLUE)Building...$(NC)"; \
+		docker-compose -f docker-compose.prod.yml build --no-cache; \
+		echo -e "$(BLUE)Starting services...$(NC)"; \
+		docker-compose -f docker-compose.prod.yml up -d; \
+		echo -e "$(GREEN)[OK] All services cleaned, rebuilt, and restarted in PROD mode$(NC)"; \
+	else \
+		echo -e "$(BLUE)Cancelled$(NC)"; \
+	fi
+
+restart-all: ## Clean, rebuild, and restart all services (full reset) - defaults to DEV
+	$(MAKE) restart-all-dev
+
 build: ## Build all images
-	docker-compose build
+	docker-compose $(COMPOSE_FILE) build
 
 status: ## Display complete container status
 	@echo -e "$(BLUE)Container Status:$(NC)"

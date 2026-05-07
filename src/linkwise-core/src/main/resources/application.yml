@@ -28,7 +28,7 @@ spring:
 
 # Server Configuration
 server:
-  port: ${BACKEND_PORT:5000}
+  port: 8080
   servlet:
     context-path: /
   compression:
