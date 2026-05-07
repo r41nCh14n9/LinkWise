@@ -1,151 +1,168 @@
-.PHONY: help dev prod stop down logs clean rebuild \
+.PHONY: help dev prod stop down logs clean rebuild restart-all \
 	shell-frontend shell-backend shell-db db-reset
 
-# 預設目標
+# Default target
 .DEFAULT_GOAL := help
 
-# 顏色定義
+# Color definitions
 BLUE := \033[0;34m
 GREEN := \033[0;32m
 YELLOW := \033[0;33m
 NC := \033[0m
 
-help: ## 顯示此幫助信息
-	@echo "$(BLUE)LinkWise Docker 命令:$(NC)"
+help: ## Display this help message
+	@echo -e "$(BLUE)LinkWise Docker Commands:$(NC)"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "$(GREEN)  %-25s$(NC) %s\n", $$1, $$2}'
 
-setup: ## 設置環境：複製 .env 文件
+setup: ## Setup environment: Copy .env file
 	@if [ ! -f .env ]; then \
-		echo "$(YELLOW)Creating .env from .env.example...$(NC)"; \
+		echo -e "$(YELLOW)Creating .env from .env.example...$(NC)"; \
 		cp .env.example .env; \
-		echo "$(GREEN)✓ .env created$(NC)"; \
+		echo -e "$(GREEN)[OK] .env created$(NC)"; \
 	else \
-		echo "$(GREEN)✓ .env already exists$(NC)"; \
+		echo -e "$(GREEN)[OK] .env already exists$(NC)"; \
 	fi
 
-dev: setup ## 啟動開發環境 (帶熱加載)
-	@echo "$(BLUE)Starting development environment...$(NC)"
+dev: setup ## Start development environment (with hot reload)
+	@echo -e "$(BLUE)Starting development environment...$(NC)"
 	docker-compose -f docker-compose.dev.yml up -d
-	@echo "$(GREEN)✓ Development environment started$(NC)"
+	@echo -e "$(GREEN)[OK] Development environment started$(NC)"
 	@echo ""
 	@echo "Services:"
-	@echo "  Frontend:  http://localhost:3000"
-	@echo "Backend (Nginx):   http://localhost:8080"
-	@echo "  Database:  localhost:5432"
+	@echo "  Frontend (Nginx):  http://localhost:3000"
+	@echo "  Backend (Direct):  http://localhost:8080"
+	@echo "  Swagger UI:        http://localhost:8080/swagger-ui/index.html"
+	@echo "  Database:          localhost:5432"
 
-prod: setup ## 啟動生產環境
-	@echo "$(BLUE)Starting production environment...$(NC)"
+prod: setup ## Start production environment
+	@echo -e "$(BLUE)Starting production environment...$(NC)"
 	docker-compose -f docker-compose.prod.yml up -d
-	@echo "$(GREEN)✓ Production environment started$(NC)"
+	@echo -e "$(GREEN)[OK] Production environment started$(NC)"
 	@echo ""
 	@echo "Services:"
-	@echo "  Frontend:  http://localhost:3000"
-	@echo "  Backend (Nginx):   http://localhost:8080"
-	@echo "  Database:  localhost:5432"
+	@echo "  Frontend:          http://localhost:3000"
+	@echo "  Backend:           http://localhost:8080"
+	@echo "  Database:          localhost:5432"
 
-stop: ## 停止所有服務（保留數據）
-	@echo "$(BLUE)Stopping all services...$(NC)"
+stop: ## Stop all services (keep data)
+	@echo -e "$(BLUE)Stopping all services...$(NC)"
 	docker-compose stop
-	@echo "$(GREEN)✓ All services stopped$(NC)"
+	@echo -e "$(GREEN)[OK] All services stopped$(NC)"
 
-down: ## 停止並移除所有容器（保留數據）
-	@echo "$(BLUE)Stopping and removing containers...$(NC)"
+down: ## Stop and remove all containers (keep data)
+	@echo -e "$(BLUE)Stopping and removing containers...$(NC)"
 	docker-compose down
-	@echo "$(GREEN)✓ Containers removed$(NC)"
+	@echo -e "$(GREEN)[OK] Containers removed$(NC)"
 
-clean: ## 清除所有容器、網絡和卷（刪除所有數據）
-	@echo "$(YELLOW)WARNING: This will delete all data!$(NC)"
+clean: ## Remove all containers, networks and volumes (DELETE all data)
+	@echo -e "$(YELLOW)WARNING: This will delete all data!$(NC)"
 	@read -p "Are you sure? (y/n) " -n 1 -r; \
 	echo ""; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
 		docker-compose down -v; \
-		echo "$(GREEN)✓ All containers and volumes removed$(NC)"; \
+		echo -e "$(GREEN)[OK] All containers and volumes removed$(NC)"; \
 	else \
-		echo "$(BLUE)Cancelled$(NC)"; \
+		echo -e "$(BLUE)Cancelled$(NC)"; \
 	fi
 
-rebuild: ## 重新構建所有映像
-	@echo "$(BLUE)Rebuilding all images...$(NC)"
+rebuild: ## Rebuild all images
+	@echo -e "$(BLUE)Rebuilding all images...$(NC)"
 	docker-compose build --no-cache
-	@echo "$(GREEN)✓ All images rebuilt$(NC)"
+	@echo -e "$(GREEN)[OK] All images rebuilt$(NC)"
 
-logs: ## 查看所有服務的日誌
+logs: ## View logs from all services
 	docker-compose logs -f
 
-logs-frontend: ## 查看前端日誌
+logs-frontend: ## View frontend logs
 	docker-compose logs -f frontend
 
-logs-backend: ## 查看後端日誌
+logs-backend: ## View backend logs
 	docker-compose logs -f backend
 
-logs-db: ## 查看資料庫日誌
+logs-db: ## View database logs
 	docker-compose logs -f database
 
-ps: ## 顯示所有容器狀態
+ps: ## Display all container status
 	docker-compose ps
 
-shell-frontend: ## 進入前端容器的 shell
+shell-frontend: ## Enter frontend container shell
 	docker-compose exec frontend sh
 
-shell-backend: ## 進入後端容器的 shell
+shell-backend: ## Enter backend container shell
 	docker-compose exec backend sh
 
-shell-db: ## 進入資料庫容器的 psql
+shell-db: ## Enter database container psql
 	docker-compose exec database psql -U linkwise_user -d linkwise_db
 
-db-reset: ## 重置資料庫
-	@echo "$(YELLOW)WARNING: This will delete all database data!$(NC)"
+db-reset: ## Reset database
+	@echo -e "$(YELLOW)WARNING: This will delete all database data!$(NC)"
 	@read -p "Are you sure? (y/n) " -n 1 -r; \
 	echo ""; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
 		docker-compose down -v; \
 		docker-compose up -d; \
-		echo "$(GREEN)✓ Database reset$(NC)"; \
+		echo -e "$(GREEN)[OK] Database reset$(NC)"; \
 	else \
-		echo "$(BLUE)Cancelled$(NC)"; \
+		echo -e "$(BLUE)Cancelled$(NC)"; \
 	fi
 
-restart: ## 重新啟動所有服務
-	@echo "$(BLUE)Restarting all services...$(NC)"
+restart: ## Restart all services
+	@echo -e "$(BLUE)Restarting all services...$(NC)"
 	docker-compose restart
-	@echo "$(GREEN)✓ All services restarted$(NC)"
+	@echo -e "$(GREEN)[OK] All services restarted$(NC)"
 
-restart-frontend: ## 重新啟動前端
+restart-frontend: ## Restart frontend
 	docker-compose restart frontend
 
-restart-backend: ## 重新啟動後端
+restart-backend: ## Restart backend
 	docker-compose restart backend
 
-restart-db: ## 重新啟動資料庫
+restart-db: ## Restart database
 	docker-compose restart database
 
-build: ## 構建所有映像
+restart-all: ## Clean, rebuild, and restart all services (full reset)
+	@echo -e "$(YELLOW)WARNING: This will rebuild all images and restart all services!$(NC)"
+	@read -p "Are you sure? (y/n) " -n 1 -r; \
+	echo ""; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		echo -e "$(BLUE)Cleaning...$(NC)"; \
+		docker-compose down -v; \
+		echo -e "$(BLUE)Building...$(NC)"; \
+		docker-compose build --no-cache; \
+		echo -e "$(BLUE)Starting services...$(NC)"; \
+		docker-compose up -d; \
+		echo -e "$(GREEN)[OK] All services cleaned, rebuilt, and restarted$(NC)"; \
+	else \
+		echo -e "$(BLUE)Cancelled$(NC)"; \
+	fi
+
+build: ## Build all images
 	docker-compose build
 
-status: ## 顯示完整的容器狀態
-	@echo "$(BLUE)Container Status:$(NC)"
+status: ## Display complete container status
+	@echo -e "$(BLUE)Container Status:$(NC)"
 	@docker-compose ps
 	@echo ""
-	@echo "$(BLUE)Network Information:$(NC)"
+	@echo -e "$(BLUE)Network Information:$(NC)"
 	@docker network ls | grep linkwise
 	@echo ""
-	@echo "$(BLUE)Volume Information:$(NC)"
+	@echo -e "$(BLUE)Volume Information:$(NC)"
 	@docker volume ls | grep postgres
 
-health-check: ## 檢查服務健康狀態
-	@echo "$(BLUE)Checking services health...$(NC)"
+health-check: ## Check service health status
+	@echo -e "$(BLUE)Checking services health...$(NC)"
 	@echo "Frontend: $$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000 || echo 'DOWN')"
-	@echo "Backend (Nginx): $$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/health || echo 'DOWN')"
+	@echo "Backend: $$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/health || echo 'DOWN')"
 	@echo "Database: $$(docker-compose exec -T database pg_isready -U linkwise_user && echo 'UP' || echo 'DOWN')"
 
-version: ## 顯示 Docker 和 Docker Compose 版本
+version: ## Show Docker and Docker Compose version
 	@echo "Docker version:"
 	@docker --version
 	@echo "Docker Compose version:"
 	@docker-compose --version
 
-# 快速啟動命令（無 make 的替代方案）
+# Quick start commands (alternative without make)
 .PHONY: up down-v env-setup
-up: dev ## 快速別名: 同 'dev'
-down-v: clean ## 快速別名: 同 'clean'
-env-setup: setup ## 快速別名: 同 'setup'
+up: dev ## Quick alias: same as 'dev'
+down-v: clean ## Quick alias: same as 'clean'
+env-setup: setup ## Quick alias: same as 'setup'
