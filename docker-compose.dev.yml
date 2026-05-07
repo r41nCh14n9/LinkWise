@@ -1,0 +1,92 @@
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:16-alpine
+    container_name: linkwise-db-dev
+    environment:
+      POSTGRES_USER: ${DB_USER:-linkwise_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-linkwise_password}
+      POSTGRES_DB: ${DB_NAME:-linkwise_db}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    networks:
+      - linkwise-network-dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-linkwise_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Service (Development)
+  backend:
+    build:
+      context: ./src/linkwise-core
+      dockerfile: Dockerfile
+    container_name: linkwise-backend-dev
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: database
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-linkwise_user}
+      DB_PASSWORD: ${DB_PASSWORD:-linkwise_password}
+      DB_NAME: ${DB_NAME:-linkwise_db}
+      BACKEND_PORT: ${BACKEND_PORT:-8080}
+      SERVER_PORT: ${BACKEND_PORT:-8080}
+    expose:
+      - "${BACKEND_PORT:-8080}"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - linkwise-network-dev
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: linkwise-nginx-dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx/dev.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - linkwise-network-dev
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Frontend Service (Development with Hot Reload)
+  frontend:
+    build:
+      context: ./src/linkwise-front
+      dockerfile: Dockerfile.dev
+    container_name: linkwise-frontend-dev
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+    expose:
+      - "3000"
+    depends_on:
+      - backend
+    networks:
+      - linkwise-network-dev
+    volumes:
+      - ./src/linkwise-front/src:/app/src
+      - ./src/linkwise-front/index.html:/app/index.html
+      - ./src/linkwise-front/tsconfig.json:/app/tsconfig.json
+      - ./src/linkwise-front/vite.config.ts:/app/vite.config.ts
+      - ./src/linkwise-front/package.json:/app/package.json
+      - /app/node_modules
+
+networks:
+  linkwise-network-dev:
+    driver: bridge
+
+volumes:
+  postgres_data_dev:
+    driver: local
