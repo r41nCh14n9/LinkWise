@@ -1,0 +1,9 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^docker-compose -f docker-compose\\.dev\\.yml down -v 2>/dev/null; docker ps -a 2>/dev/null \\| grep linkwise \\|\\| echo \"No linkwise containers found\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "docker-compose": true
+    }
+}

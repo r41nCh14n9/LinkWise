@@ -1,0 +1,92 @@
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:16-alpine
+    container_name: linkwise-db
+    environment:
+      POSTGRES_USER: ${DB_USER:-linkwise_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-linkwise_password}
+      POSTGRES_DB: ${DB_NAME:-linkwise_db}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - linkwise-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-linkwise_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Service
+  backend:
+    build:
+      context: ./src/linkwise-core
+      dockerfile: Dockerfile
+    container_name: linkwise-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: database
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${DB_USER:-linkwise_user}
+      DB_PASSWORD: ${DB_PASSWORD:-linkwise_password}
+      DB_NAME: ${DB_NAME:-linkwise_db}
+      BACKEND_PORT: ${BACKEND_PORT:-8080}
+      SERVER_PORT: ${BACKEND_PORT:-8080}
+    ports:
+      - "${BACKEND_PORT:-8080}:${BACKEND_PORT:-8080}"
+    expose:
+      - "${BACKEND_PORT:-8080}"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - linkwise-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: linkwise-nginx
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      backend:
+        condition: service_started
+      frontend:
+        condition: service_started
+    networks:
+      - linkwise-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./src/linkwise-front
+      dockerfile: Dockerfile
+    container_name: linkwise-frontend
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+    expose:
+      - "3000"
+    depends_on:
+      - backend
+    networks:
+      - linkwise-network
+    volumes:
+      - ./src/linkwise-front:/app
+      - /app/node_modules
+
+networks:
+  linkwise-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

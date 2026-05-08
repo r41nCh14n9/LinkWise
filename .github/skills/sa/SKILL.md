@@ -175,12 +175,58 @@ The skill generates:
 
 **📖 Reference:** [Documentation Hub](../../../docs/INDEX.md)
 
+---
+
+## README Template
+
+A generic, project-agnostic README template suitable for any software project.
+
+**📄 Template:** [README-TEMPLATE.md](./assets/README-TEMPLATE.md)
+
+### Quick Reference
+
+The template includes optional and required sections:
+
+| Section | Required | Purpose |
+|---------|----------|---------|
+| 徽章與統計 | ❌ | Project statistics and badges |
+| 專案描述 | ✅ | Project purpose and value |
+| 功能清單 | ✅ | Feature overview |
+| 畫面展示 | ❌ | Screenshots (important for UI projects) |
+| 快速開始 | ✅ | Installation and execution steps |
+| 環境變數說明 | ❌ | Configuration reference |
+| 文件結構 | ❌ | Directory organization |
+| 技術棧 | ✅ | Technologies and versions |
+| 開發指南 | ❌ | Development workflow |
+| CI/CD 說明 | ❌ | Automation explanation |
+| 常見問題 | ❌ | FAQ and troubleshooting |
+| 聯絡方式 | ❌ | Team contact information |
+| 授權 | ✅ | License information |
+
+### Usage Tips
+
+- **Customize for your project**: Adapt sections based on your actual needs
+- **Keep it concise**: Use lists, tables, and code examples instead of long paragraphs
+- **Provide real values**: Use actual port numbers, file names, and commands
+- **Update regularly**: Keep documentation in sync with codebase
+- **Use placeholders**: All `[xxx]` elements should be replaced with project-specific values
+
+### When to Create a Custom README
+
+1. **Before development starts**: Create early to clarify project scope
+2. **During development**: Update as features are implemented
+3. **After major releases**: Ensure documentation reflects current state
+4. **When onboarding**: Verify README helps new contributors get started
+
 ## Resources
 
 - **Doc-Coauthoring Workflow**: [Anthropic doc-coauthoring skill](https://github.com/anthropics/skills/tree/main/skills/doc-coauthoring)
 - **DOCX Creation & Editing**: [Anthropic docx skill](https://github.com/anthropics/skills/tree/main/skills/docx)
 - **DOCX Library**: [docx npm package](https://www.npmjs.com/package/docx)
 - **Markdown to HTML/PDF**: [Pandoc documentation](https://pandoc.org/)
+- **README Template**: [README-TEMPLATE.md](./assets/README-TEMPLATE.md) - Generic template for any project
+- **Awesome README**: [GitHub collection of great README examples](https://github.com/matiassingers/awesome-readme)
+- **Shields.io**: [Badge generation service](https://shields.io/)
 
 ## Related
 

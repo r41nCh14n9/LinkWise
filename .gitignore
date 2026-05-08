@@ -1,0 +1,11 @@
+
+
+# frontend ignore files and folders
+src/linkwise-frontend/node_modules/
+src/linkwise-frontend/build/
+src/linkwise-frontend/dist/
+src/linkwise-frontend/coverage/
+src/linkwise-frontend/.DS_Store
+src/linkwise-frontend/*.log
+src/linkwise-frontend/.env*
+!src/linkwise-frontend/.env.example
