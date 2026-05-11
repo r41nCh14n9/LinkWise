@@ -1,11 +1,100 @@
 
+################################
+# Project-level ignores
+################################
 
-# frontend ignore files and folders
-src/linkwise-frontend/node_modules/
-src/linkwise-frontend/build/
-src/linkwise-frontend/dist/
-src/linkwise-frontend/coverage/
-src/linkwise-frontend/.DS_Store
-src/linkwise-frontend/*.log
-src/linkwise-frontend/.env*
-!src/linkwise-frontend/.env.example
+# Environment files (but track examples)
+.env
+.env.local
+.env.*.local
+.env*.example
+!.env.example
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE and Editor files
+.vscode/
+!.vscode/settings.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+.eclipse
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+################################
+# Frontend (React/TypeScript)
+################################
+src/linkwise-front/node_modules/
+src/linkwise-front/dist/
+src/linkwise-front/build/
+src/linkwise-front/coverage/
+src/linkwise-front/.env.local
+src/linkwise-front/.env.*.local
+
+# Testing coverage reports
+src/linkwise-front/.nyc_output/
+src/linkwise-front/coverage/
+
+# Vite cache
+src/linkwise-front/.vite/
+
+# Package lock files (optional - uncomment if team uses lock files)
+# src/linkwise-front/package-lock.json
+# src/linkwise-front/yarn.lock
+
+################################
+# Backend (Java/Spring)
+################################
+src/linkwise-core/target/
+src/linkwise-core/.gradle/
+src/linkwise-core/build/
+src/linkwise-core/.classpath
+src/linkwise-core/.project
+src/linkwise-core/.settings/
+src/linkwise-core/.idea/
+src/linkwise-core/*.iml
+
+# Maven
+src/linkwise-core/.m2/
+src/linkwise-core/dependency-reduced-pom.xml
+
+# Gradle
+src/linkwise-core/gradle/
+src/linkwise-core/gradlew
+src/linkwise-core/gradlew.bat
+
+################################
+# Documentation & Reports
+################################
+# Generated test reports (but track test files)
+docs/testing/**/coverage/
+docs/testing/**/*.html
+docs/testing/**/reports/
+
+# Build artifacts
+dist/
+build/
+
+################################
+# Docker
+################################
+.docker/
+docker-volumes/
+*.dockerfile.bak
