@@ -4,6 +4,10 @@
             "approve": true,
             "matchCommandLine": true
         },
-        "docker-compose": true
+        "docker-compose": true,
+        "/^cd /f/projects/LinkWise/src/linkwise-core && mvn clean compile 2>&1 \\| tail -50$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     }
 }

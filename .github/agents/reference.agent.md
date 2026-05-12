@@ -139,6 +139,6 @@ When using this agent:
 
 ## Related Documentation
 
-- [Development Agent](./development.agent.md) - Uses Reference materials
+- [Development Agent](./dev.agent.md) - Uses Reference materials
 - [ARCHITECTURE.md](../ARCHITECTURE.md) - System overview
 - [Documentation Hub](../../docs/INDEX.md) - Project structure

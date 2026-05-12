@@ -337,7 +337,7 @@ When using this agent:
 - Reviews ensure quality before testing begins
 
 **Related Agents:**
-- [Development Agent](./development.agent.md) - Creates code and implementation records
+- [Development Agent](./dev.agent.md) - Creates code and implementation records
 - [SD Agent](./sd.agent.md) - Creates design specifications
 - [SA Agent](./sa.agent.md) - Creates requirements
 - [Test Agent](./test.agent.md) - Creates and executes tests

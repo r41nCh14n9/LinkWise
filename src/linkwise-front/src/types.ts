@@ -50,3 +50,29 @@ export interface PurchaseOrder extends PurchaseRequest {
   poNumber: string;
   issueDate: string;
 }
+
+// Dashboard Types
+export interface DashboardSummary {
+  monthlyExpense: {
+    amount: number;
+    currency: string;
+    trend: number;
+    departmentBreakdown: Record<string, number>;
+    categoryBreakdown: Record<string, number>;
+    updatedAt?: string;
+  };
+  activeVendors: {
+    count: number;
+    trend: number;
+    byCategory?: Record<string, number>;
+  };
+  pendingPRs: {
+    count: number;
+    overdue: number;
+    byCostCenter?: Record<string, number>;
+  };
+  inventoryWarnings: {
+    count: number;
+    criticalItems?: string[];
+  };
+}

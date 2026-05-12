@@ -39,10 +39,10 @@ This `.github/` structure implements a **generic, reusable framework** that work
 │  ├── reference.agent.md        ├── reference/                   │
 │  ├── sa.agent.md               ├── sa/                          │
 │  ├── sd.agent.md               ├── sd/                          │
-│  ├── development.agent.md      ├── development/                 │
-│  ├── review.agent.md (NEW)     ├── review/ (NEW)               │
+│  ├── dev.agent.md              ├── dev/                         │
+│  ├── review.agent.md (NEW)     ├── review/                      │
 │  └── test.agent.md             └── test/                        │
-│                                                                  │
+│                                                                 │
 │  All reference docs/ folder for:                                │
 │  - Output location: docs/*/                                     │
 │  - Input references: docs/reference/                            │
@@ -102,7 +102,7 @@ This `.github/` structure implements a **generic, reusable framework** that work
 | 📋 **Plan** | [plan.agent.md](./agents/plan.agent.md) | [SKILL.md](./skills/plan/SKILL.md) | Project Planning & Roadmaps |
 | 📊 **SA** | [sa.agent.md](./agents/sa.agent.md) | [SKILL.md](./skills/sa/SKILL.md) | Requirements Analysis |
 | 🏗️ **SD** | [sd.agent.md](./agents/sd.agent.md) | [SKILL.md](./skills/sd/SKILL.md) | System Design & Architecture |
-| 💻 **Development** | [development.agent.md](./agents/development.agent.md) | [SKILL.md](./skills/development/SKILL.md) | Feature Implementation |
+| 💻 **Development** | [dev.agent.md](./agents/dev.agent.md) | [SKILL.md](./skills/dev/SKILL.md) | Feature Implementation |
 | ✨ **Review** | [review.agent.md](./agents/review.agent.md) | [SKILL.md](./skills/review/SKILL.md) | Code & Design Quality |
 | ✅ **Test** | [test.agent.md](./agents/test.agent.md) | [SKILL.md](./skills/test/SKILL.md) | Test Planning & QA |
 

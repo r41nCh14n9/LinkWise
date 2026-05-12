@@ -269,7 +269,7 @@ Before finalizing reference materials:
 ## Related Resources
 
 - [Reference Agent](../../agents/reference.agent.md) - Agent definition
-- [Development Agent](../../agents/development.agent.md) - Uses these materials
+- [Development Agent](../../agents/dev.agent.md) - Uses these materials
 - [Plan Agent](../../agents/plan.agent.md) - Uses guidelines
 - [ARCHITECTURE.md](../../ARCHITECTURE.md) - System overview
 - [Documentation Hub](../../../docs/INDEX.md) - Project structure
