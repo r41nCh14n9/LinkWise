@@ -39,9 +39,13 @@ lerna-debug.log*
 .cache/
 
 ################################
+# Node modules (all locations)
+################################
+node_modules/
+
+################################
 # Frontend (React/TypeScript)
 ################################
-src/linkwise-front/node_modules/
 src/linkwise-front/dist/
 src/linkwise-front/build/
 src/linkwise-front/coverage/

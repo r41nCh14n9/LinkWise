@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Users, 
@@ -20,27 +20,32 @@ import {
   Building2,
   Clock,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Loader,
+  AlertTriangle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { User, Vendor, PurchaseRequest, UserRole, DocumentStatus } from './types.ts';
+import { User, Vendor, PurchaseRequest, UserRole, DocumentStatus, DashboardSummary } from './types.ts';
+import { userVendorApiClient } from './services/userVendorApi.ts';
+import { dashboardApiClient } from './services/api.ts';
+import { mapSummaryCardsToState } from './types/dashboard';
 
-// Mock Data
-const MOCK_USERS: User[] = [
+// Fallback Mock Data (used when API is not available)
+const FALLBACK_USERS: User[] = [
   { id: '1', name: 'Alex Chen', email: 'alex@procure.hub', role: 'ADMIN', department: 'Operations' },
   { id: '2', name: 'Sarah Wu', email: 'sarah@procure.hub', role: 'BUYER', department: 'Procurement' },
   { id: '3', name: 'David Lin', email: 'david@procure.hub', role: 'APPROVER', department: 'Finance' },
   { id: '4', name: 'Emily Wong', email: 'emily@procure.hub', role: 'REQUESTER', department: 'Marketing' },
 ];
 
-const MOCK_VENDORS: Vendor[] = [
+const FALLBACK_VENDORS: Vendor[] = [
   { id: 'V1', name: 'TechSolutions Inc.', category: 'Hardware', contactPerson: 'John Smith', email: 'sales@techsol.com', status: 'ACTIVE', rating: 4.8 },
   { id: 'V2', name: 'Global LogisticsCo', category: 'Services', contactPerson: 'Maria Garcia', email: 'ops@globallog.com', status: 'ACTIVE', rating: 4.5 },
   { id: 'V3', name: 'Prime Office Supplies', category: 'Stationery', contactPerson: 'Robert Brown', email: 'orders@primeoffice.com', status: 'ONBOARDING', rating: 0 },
   { id: 'V4', name: 'Elite Security Systems', category: 'Security', contactPerson: 'Kevin Lee', email: 'kevin@elitesec.com', status: 'BLACKLISTED', rating: 3.2 },
 ];
 
-const MOCK_PRs: PurchaseRequest[] = [
+const FALLBACK_PRs: PurchaseRequest[] = [
   { 
     id: 'PR-2024-001', 
     title: 'New MacBooks for Design Team', 
@@ -81,8 +86,89 @@ type View = 'dashboard' | 'rbac' | 'vms' | 'prpo';
 export default function App() {
   const [activeView, setActiveView] = useState<View>('dashboard');
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [prs, setPrs] = useState<PurchaseRequest[]>(MOCK_PRs);
   const [isCreatePanelOpen, setCreatePanelOpen] = useState(false);
+
+  // Data states
+  const [users, setUsers] = useState<User[]>(FALLBACK_USERS);
+  const [vendors, setVendors] = useState<Vendor[]>(FALLBACK_VENDORS);
+  const [prs, setPrs] = useState<PurchaseRequest[]>(FALLBACK_PRs);
+  const [dashboardSummary, setDashboardSummary] = useState<DashboardSummary | null>(null);
+  
+  // Loading and error states
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [isLoadingVendors, setIsLoadingVendors] = useState(true);
+  const [isLoadingPRs, setIsLoadingPRs] = useState(true);
+  const [isLoadingDashboard, setIsLoadingDashboard] = useState(true);
+  const [errorUsers, setErrorUsers] = useState<string | null>(null);
+  const [errorVendors, setErrorVendors] = useState<string | null>(null);
+  const [errorPRs, setErrorPRs] = useState<string | null>(null);
+  const [errorDashboard, setErrorDashboard] = useState<string | null>(null);
+
+  // Fetch users on component mount
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setIsLoadingUsers(true);
+      setErrorUsers(null);
+      try {
+        const data = await userVendorApiClient.getAllUsers();
+        setUsers(data);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Failed to load users';
+        console.error('Error fetching users:', message);
+        setErrorUsers(message);
+        // Keep using fallback data
+      } finally {
+        setIsLoadingUsers(false);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  // Fetch vendors on component mount
+  useEffect(() => {
+    const fetchVendors = async () => {
+      setIsLoadingVendors(true);
+      setErrorVendors(null);
+      try {
+        const data = await userVendorApiClient.getAllVendors();
+        setVendors(data);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Failed to load vendors';
+        console.error('Error fetching vendors:', message);
+        setErrorVendors(message);
+        // Keep using fallback data
+      } finally {
+        setIsLoadingVendors(false);
+      }
+    };
+    fetchVendors();
+  }, []);
+
+  // TODO: Fetch PRs from API when available
+  useEffect(() => {
+    setIsLoadingPRs(false);
+    // Placeholder for future PR API implementation
+  }, []);
+
+  // Fetch dashboard summary on component mount
+  useEffect(() => {
+    const fetchDashboardSummary = async () => {
+      setIsLoadingDashboard(true);
+      setErrorDashboard(null);
+      try {
+        const data = await dashboardApiClient.getSummaryCards({ organizationId: 1 });
+        const mappedData = mapSummaryCardsToState(data);
+        setDashboardSummary(mappedData);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Failed to load dashboard';
+        console.error('Error fetching dashboard:', message);
+        setErrorDashboard(message);
+      } finally {
+        setIsLoadingDashboard(false);
+      }
+    };
+    fetchDashboardSummary();
+  }, []);
 
   const handleAddPR = (newPR: PurchaseRequest) => {
     setPrs([newPR, ...prs]);
@@ -185,10 +271,26 @@ export default function App() {
         </header>
 
         <div className="flex-1 overflow-y-auto p-8">
+          {/* Show errors if any */}
+          {(errorUsers || errorVendors) && (
+            <div className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-3">
+              <AlertTriangle className="text-amber-600 flex-shrink-0 mt-0.5" size={18} />
+              <div>
+                <p className="font-semibold text-amber-900">Data Loading Issues</p>
+                <p className="text-sm text-amber-800 mt-1">
+                  {errorUsers && `Users: ${errorUsers}`}
+                  {errorUsers && errorVendors && ' | '}
+                  {errorVendors && `Vendors: ${errorVendors}`}
+                </p>
+                <p className="text-xs text-amber-700 mt-2">Using fallback data. Please check your connection or backend server.</p>
+              </div>
+            </div>
+          )}
+
           <AnimatePresence mode="wait">
-            {activeView === 'dashboard' && <DashboardView key="dashboard" prs={prs} onCreateClick={() => setCreatePanelOpen(true)} />}
-            {activeView === 'rbac' && <RBACView key="rbac" />}
-            {activeView === 'vms' && <VMSView key="vms" />}
+            {activeView === 'dashboard' && <DashboardView key="dashboard" prs={prs} vendors={vendors} dashboardSummary={dashboardSummary} isLoadingDashboard={isLoadingDashboard} errorDashboard={errorDashboard} onCreateClick={() => setCreatePanelOpen(true)} />}
+            {activeView === 'rbac' && <RBACView key="rbac" users={users} isLoading={isLoadingUsers} error={errorUsers} />}
+            {activeView === 'vms' && <VMSView key="vms" vendors={vendors} isLoading={isLoadingVendors} error={errorVendors} />}
             {activeView === 'prpo' && <PRPOView key="prpo" prs={prs} onCreateClick={() => setCreatePanelOpen(true)} />}
           </AnimatePresence>
         </div>
@@ -234,7 +336,7 @@ function NavItem({ icon, label, active, collapsed, onClick }: { icon: React.Reac
 }
 
 // Views
-function DashboardView({ prs, onCreateClick }: { prs: PurchaseRequest[], onCreateClick: () => void, key?: string }) {
+function DashboardView({ prs, vendors, dashboardSummary, isLoadingDashboard, errorDashboard, onCreateClick }: { prs: PurchaseRequest[], vendors: Vendor[], dashboardSummary: DashboardSummary | null, isLoadingDashboard: boolean, errorDashboard: string | null, onCreateClick: () => void }) {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 10 }}
@@ -256,81 +358,115 @@ function DashboardView({ prs, onCreateClick }: { prs: PurchaseRequest[], onCreat
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Total Spending" value="$1.2M" subValue="+12% vs last month" icon={<TrendingUp className="text-emerald-500" />} />
-        <StatCard title="Active Vendors" value="48" subValue="3 onboarding" icon={<Building2 className="text-indigo-500" />} />
-        <StatCard title="Pending PRs" value={prs.filter(p => p.status === 'PENDING_APPROVAL').length.toString()} subValue="Avg. 2.4 days approval" icon={<Clock className="text-amber-500" />} />
-        <StatCard title="Inventory Items" value="1,204" subValue="8 items low stock" icon={<Package className="text-blue-500" />} />
-      </div>
+      {errorDashboard && (
+        <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg text-rose-800">
+          <p className="text-sm">Error loading dashboard: {errorDashboard}</p>
+        </div>
+      )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-          <h3 className="font-bold text-slate-900 mb-6 font-mono text-xs uppercase tracking-widest flex items-center gap-2">
-            <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
-            Recent Activity
-          </h3>
-          <div className="space-y-6">
-            {prs.slice(0, 5).map(pr => (
-              <div key={pr.id} className="flex items-start justify-between border-b border-slate-100 pb-4 last:border-0 last:pb-0">
-                <div className="flex gap-4">
-                  <div className={`p-2 rounded-lg ${
-                    pr.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
-                    pr.status === 'PENDING_APPROVAL' ? 'bg-amber-50 text-amber-600' :
-                    'bg-slate-50 text-slate-600'
-                  }`}>
-                    <FileText size={20} />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900">{pr.title}</h4>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded uppercase">{pr.id}</span>
-                      <span className="text-xs text-slate-500">{pr.department}</span>
+      {isLoadingDashboard ? (
+        <div className="flex justify-center items-center py-12">
+          <Loader className="animate-spin text-indigo-600" size={32} />
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard 
+              title="Total Spending" 
+              value={dashboardSummary ? `${(dashboardSummary.monthlyExpense.amount / 1000000).toFixed(1)}M` : '$0'} 
+              subValue={dashboardSummary ? `+${dashboardSummary.monthlyExpense.trend}% vs last month` : 'N/A'} 
+              icon={<TrendingUp className="text-emerald-500" />} 
+            />
+            <StatCard 
+              title="Active Vendors" 
+              value={dashboardSummary ? dashboardSummary.activeVendors.count.toString() : '0'} 
+              subValue={dashboardSummary ? `${dashboardSummary.activeVendors.trend} new` : 'N/A'} 
+              icon={<Building2 className="text-indigo-500" />} 
+            />
+            <StatCard 
+              title="Pending PRs" 
+              value={dashboardSummary ? dashboardSummary.pendingPRs.count.toString() : '0'} 
+              subValue={dashboardSummary ? `${dashboardSummary.pendingPRs.overdue} overdue` : 'N/A'} 
+              icon={<Clock className="text-amber-500" />} 
+            />
+            <StatCard 
+              title="Inventory Items" 
+              value={dashboardSummary ? dashboardSummary.inventoryWarnings.count.toString() : '0'} 
+              subValue={dashboardSummary ? `${(dashboardSummary.inventoryWarnings.criticalItems || []).length} critical` : 'N/A'} 
+              icon={<Package className="text-blue-500" />} 
+            />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+              <h3 className="font-bold text-slate-900 mb-6 font-mono text-xs uppercase tracking-widest flex items-center gap-2">
+                <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                Recent Activity
+              </h3>
+              <div className="space-y-6">
+                {prs.slice(0, 5).map(pr => (
+                  <div key={pr.id} className="flex items-start justify-between border-b border-slate-100 pb-4 last:border-0 last:pb-0">
+                    <div className="flex gap-4">
+                      <div className={`p-2 rounded-lg ${
+                        pr.status === 'APPROVED' ? 'bg-emerald-50 text-emerald-600' :
+                        pr.status === 'PENDING_APPROVAL' ? 'bg-amber-50 text-amber-600' :
+                        'bg-slate-50 text-slate-600'
+                      }`}>
+                        <FileText size={20} />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-slate-900">{pr.title}</h4>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded uppercase">{pr.id}</span>
+                          <span className="text-xs text-slate-500">{pr.department}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-mono text-sm tracking-tight text-slate-900">${pr.totalAmount.toLocaleString()}</p>
+                      <StatusBadge status={pr.status} />
                     </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-mono text-sm tracking-tight text-slate-900">${pr.totalAmount.toLocaleString()}</p>
-                  <StatusBadge status={pr.status} />
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col">
-          <h3 className="font-bold text-slate-900 mb-6 font-mono text-xs uppercase tracking-widest flex items-center gap-2">
-            <span className="w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_8px_rgba(244,63,94,0.5)] animate-pulse"></span>
-            Supplier Risk Matrix
-          </h3>
-          <div className="flex-1 space-y-4">
-            {MOCK_VENDORS.slice(0, 4).map(v => (
-              <div key={v.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs">
-                    {v.name.charAt(0)}
+            <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm flex flex-col">
+              <h3 className="font-bold text-slate-900 mb-6 font-mono text-xs uppercase tracking-widest flex items-center gap-2">
+                <span className="w-2 h-2 bg-rose-500 rounded-full shadow-[0_0_8px_rgba(244,63,94,0.5)] animate-pulse"></span>
+                Supplier Risk Matrix
+              </h3>
+              <div className="flex-1 space-y-4">
+                {vendors.slice(0, 4).map(v => (
+                  <div key={v.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs">
+                        {v.name.charAt(0)}
+                      </div>
+                      <span className="text-sm font-medium text-slate-800 line-clamp-1">{v.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="flex gap-0.5">
+                        {[1,2,3,4,5].map(s => (
+                          <div key={s} className={`w-1 h-3 rounded-full ${s <= v.rating ? 'bg-indigo-500' : 'bg-slate-200'}`}></div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-sm font-medium text-slate-800 line-clamp-1">{v.name}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="flex gap-0.5">
-                    {[1,2,3,4,5].map(s => (
-                      <div key={s} className={`w-1 h-3 rounded-full ${s <= v.rating ? 'bg-indigo-500' : 'bg-slate-200'}`}></div>
-                    ))}
-                  </div>
-                </div>
+                ))}
               </div>
-            ))}
+              <button className="mt-6 w-full text-center text-xs font-semibold text-indigo-600 hover:text-indigo-700 underline underline-offset-4">
+                View All Performance Logs
+              </button>
+            </div>
           </div>
-          <button className="mt-6 w-full text-center text-xs font-semibold text-indigo-600 hover:text-indigo-700 underline underline-offset-4">
-            View All Performance Logs
-          </button>
-        </div>
-      </div>
+        </>
+      )}
     </motion.div>
   );
 }
 
-function RBACView() {
+function RBACView({ users, isLoading, error }: { users: User[], isLoading: boolean, error: string | null }) {
   return (
     <motion.div 
       initial={{ opacity: 0, x: 20 }}
@@ -352,49 +488,61 @@ function RBACView() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-slate-50 border-b border-slate-200">
-              <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Identity</th>
-              <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Department</th>
-              <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Assigned Role</th>
-              <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {MOCK_USERS.map(user => (
-              <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold ring-2 ring-transparent group-hover:ring-slate-200 transition-all">
-                      {user.name.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold text-slate-900">{user.name}</p>
-                      <p className="text-xs text-slate-400 font-mono italic">{user.email}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="text-sm text-slate-600">{user.department}</span>
-                </td>
-                <td className="px-6 py-4">
-                  <RoleChip role={user.role} />
-                </td>
-                <td className="px-6 py-4">
-                  <button className="text-indigo-600 text-xs font-bold hover:underline">Edit Permission</button>
-                </td>
+      {error && (
+        <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg text-rose-800">
+          <p className="text-sm">Error loading users: {error}</p>
+        </div>
+      )}
+
+      {isLoading ? (
+        <div className="flex justify-center items-center py-12">
+          <Loader className="animate-spin text-indigo-600" size={32} />
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200">
+                <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Identity</th>
+                <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Department</th>
+                <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Assigned Role</th>
+                <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {users.map(user => (
+                <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold ring-2 ring-transparent group-hover:ring-slate-200 transition-all">
+                        {user.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-slate-900">{user.name}</p>
+                        <p className="text-xs text-slate-400 font-mono italic">{user.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-sm text-slate-600">{user.department}</span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <RoleChip role={user.role} />
+                  </td>
+                  <td className="px-6 py-4">
+                    <button className="text-indigo-600 text-xs font-bold hover:underline">Edit Permission</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </motion.div>
   );
 }
 
-function VMSView() {
+function VMSView({ vendors, isLoading, error }: { vendors: Vendor[], isLoading: boolean, error: string | null }) {
   return (
     <motion.div 
       initial={{ opacity: 0, x: 20 }}
@@ -413,6 +561,12 @@ function VMSView() {
         <button className="px-4 py-2 text-sm font-semibold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all shadow-sm">Onboard New Supplier</button>
       </div>
 
+      {error && (
+        <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg text-rose-800">
+          <p className="text-sm">Error loading vendors: {error}</p>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-1 space-y-4">
           <div className="p-5 bg-white border border-slate-200 rounded-xl space-y-3">
@@ -420,15 +574,15 @@ function VMSView() {
             <div className="space-y-2">
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input type="checkbox" defaultChecked className="accent-indigo-600" />
-                <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">Active (42)</span>
+                <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">Active ({vendors.filter(v => v.status === 'ACTIVE').length})</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input type="checkbox" className="accent-indigo-600" />
-                <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">Onboarding (3)</span>
+                <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">Onboarding ({vendors.filter(v => v.status === 'ONBOARDING').length})</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input type="checkbox" className="accent-indigo-600" />
-                <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">Blacklisted (2)</span>
+                <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">Blacklisted ({vendors.filter(v => v.status === 'BLACKLISTED').length})</span>
               </label>
             </div>
           </div>
@@ -442,44 +596,50 @@ function VMSView() {
         </div>
 
         <div className="lg:col-span-3 bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Supplier Domain</th>
-                <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Category</th>
-                <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Risk Profile</th>
-                <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Score</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {MOCK_VENDORS.map(v => (
-                <tr key={v.id} className="hover:bg-slate-50/50 transition-colors group">
-                  <td className="px-6 py-4">
-                    <p className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{v.name}</p>
-                    <p className="text-xs text-slate-400 font-mono italic">{v.contactPerson}</p>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-xs bg-slate-100 px-2 py-1 rounded text-slate-600">{v.category}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <VendorStatus status={v.status} />
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                       <span className={`font-mono text-sm font-bold ${v.rating > 4 ? 'text-emerald-600' : 'text-slate-900'}`}>{v.rating || 'N/A'}</span>
-                    </div>
-                  </td>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader className="animate-spin text-indigo-600" size={32} />
+            </div>
+          ) : (
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Supplier Domain</th>
+                  <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Category</th>
+                  <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Risk Profile</th>
+                  <th className="px-6 py-4 text-[10px] font-mono uppercase tracking-wider text-slate-500 italic">Score</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {vendors.map(v => (
+                  <tr key={v.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <td className="px-6 py-4">
+                      <p className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{v.name}</p>
+                      <p className="text-xs text-slate-400 font-mono italic">{v.contactPerson}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="text-xs bg-slate-100 px-2 py-1 rounded text-slate-600">{v.category}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <VendorStatus status={v.status} />
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                         <span className={`font-mono text-sm font-bold ${v.rating > 4 ? 'text-emerald-600' : 'text-slate-900'}`}>{v.rating || 'N/A'}</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </motion.div>
   );
 }
 
-function PRPOView({ prs, onCreateClick }: { prs: PurchaseRequest[], onCreateClick: () => void, key?: string }) {
+function PRPOView({ prs, onCreateClick }: { prs: PurchaseRequest[], onCreateClick: () => void }) {
   return (
     <motion.div 
       initial={{ opacity: 0, x: 20 }}

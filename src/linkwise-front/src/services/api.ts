@@ -23,7 +23,7 @@ import * as validators from '../utils/validators';
 // API 客戶端配置
 // ============================================================================
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.host}` : 'http://localhost:8080');
 const API_VERSION = '/api/v1';
 const DASHBOARD_ENDPOINT = `${API_BASE_URL}${API_VERSION}/dashboard`;
 
@@ -208,12 +208,15 @@ class DashboardApiClient {
    */
   async getSummaryCards(params: DashboardQueryParams): Promise<SummaryCardsDTO> {
     try {
-      const response = await axiosInstance.get<ApiResponse<SummaryCardsDTO>>(
+      const response = await axiosInstance.get<SummaryCardsDTO>(
         '/summary',
         { params }
       );
-      // 使用驗證函數確保響應結構正確
-      return this.handleResponse(response.data, validators.isValidSummaryCards);
+      // 直接返回响应数据 (后端不包装在 ApiResponse 中)
+      if (!response.data) {
+        throw new Error('Response data is empty');
+      }
+      return response.data;
     } catch (error) {
       throw this.handleError(error);
     }
@@ -423,4 +426,4 @@ export const dashboardApiClient = new DashboardApiClient();
 // ============================================================================
 
 export type { DashboardApiClient, ApiErrorEvent };
-export { axiosInstance, apiErrorEmitter };
+export { axiosInstance };

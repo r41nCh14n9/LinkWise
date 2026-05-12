@@ -13,13 +13,31 @@ export interface MonthlyExpenseDTO {
   trend: number; // 增減百分比，例如 12 代表 +12%
   departmentBreakdown: Record<string, number>;
   categoryBreakdown: Record<string, number>;
+  updatedAt?: string; // 可選
+}
+
+export interface ActiveVendorsDTO {
+  count: number;
+  trend: number;
+  byCategory?: Record<string, number>;
+}
+
+export interface PendingPRsDTO {
+  count: number;
+  overdue: number;
+  byCostCenter?: Record<string, number>;
+}
+
+export interface InventoryWarningsDTO {
+  count: number;
+  criticalItems?: string[];
 }
 
 export interface SummaryCardsDTO {
   monthlyExpense: MonthlyExpenseDTO;
-  activeVendors: number;
-  pendingPRs: number;
-  inventoryWarnings: number;
+  activeVendors: ActiveVendorsDTO;
+  pendingPRs: PendingPRsDTO;
+  inventoryWarnings: InventoryWarningsDTO;
 }
 
 // ============================================================================
@@ -202,11 +220,36 @@ export interface ApiErrorResponse {
 }
 
 // ============================================================================
-// 導出索引
+// 數據映射函數
 // ============================================================================
 
-export type { MonthlyExpenseDTO, SummaryCardsDTO };
-export type { ExpenseTrendDTO, MonthlyExpenseDataDTO };
-export type { VendorScoringDTO, VendorScoreDetailDTO };
-export type { PRPOFunnelDTO, FunnelStageDTO };
-export type { RecentOperationsDTO, RecentPRDTO };
+import type { DashboardSummary } from '../types';
+
+export const mapSummaryCardsToState = (dto: SummaryCardsDTO): DashboardSummary => {
+  return {
+    monthlyExpense: {
+      amount: dto.monthlyExpense.amount,
+      currency: dto.monthlyExpense.currency,
+      trend: dto.monthlyExpense.trend,
+      departmentBreakdown: dto.monthlyExpense.departmentBreakdown,
+      categoryBreakdown: dto.monthlyExpense.categoryBreakdown,
+      updatedAt: dto.monthlyExpense.updatedAt || new Date().toISOString(),
+    },
+    activeVendors: {
+      count: dto.activeVendors.count,
+      trend: dto.activeVendors.trend,
+      byCategory: dto.activeVendors.byCategory || {},
+    },
+    pendingPRs: {
+      count: dto.pendingPRs.count,
+      overdue: dto.pendingPRs.overdue,
+      byCostCenter: dto.pendingPRs.byCostCenter || {},
+    },
+    inventoryWarnings: {
+      count: dto.inventoryWarnings.count,
+      criticalItems: dto.inventoryWarnings.criticalItems || [],
+    },
+  };
+};
+
+

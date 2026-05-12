@@ -7,35 +7,35 @@
 // 類型檢查
 // ============================================================================
 
-export const isNumber = (value: any): value is number => {
+const isNumber = (value: any): value is number => {
   return typeof value === 'number' && !isNaN(value);
 };
 
-export const isString = (value: any): value is string => {
+const isString = (value: any): value is string => {
   return typeof value === 'string';
 };
 
-export const isArray = (value: any): value is any[] => {
+const isArray = (value: any): value is any[] => {
   return Array.isArray(value);
 };
 
-export const isObject = (value: any): value is Record<string, any> => {
+const isObject = (value: any): value is Record<string, any> => {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 };
 
-export const isBoolean = (value: any): value is boolean => {
+const isBoolean = (value: any): value is boolean => {
   return typeof value === 'boolean';
 };
 
-export const isNull = (value: any): value is null => {
+const isNull = (value: any): value is null => {
   return value === null;
 };
 
-export const isUndefined = (value: any): value is undefined => {
+const isUndefined = (value: any): value is undefined => {
   return value === undefined;
 };
 
-export const isEmpty = (value: any): boolean => {
+const isEmpty = (value: any): boolean => {
   if (isNull(value) || isUndefined(value)) return true;
   if (isString(value)) return value.trim().length === 0;
   if (isArray(value)) return value.length === 0;
@@ -47,19 +47,19 @@ export const isEmpty = (value: any): boolean => {
 // 數值驗證
 // ============================================================================
 
-export const isPositive = (value: number): boolean => {
+const isPositive = (value: number): boolean => {
   return isNumber(value) && value > 0;
 };
 
-export const isNonNegative = (value: number): boolean => {
+const isNonNegative = (value: number): boolean => {
   return isNumber(value) && value >= 0;
 };
 
-export const isInRange = (value: number, min: number, max: number): boolean => {
+const isInRange = (value: number, min: number, max: number): boolean => {
   return isNumber(value) && value >= min && value <= max;
 };
 
-export const isPercentage = (value: number): boolean => {
+const isPercentage = (value: number): boolean => {
   return isInRange(value, 0, 100);
 };
 
@@ -67,17 +67,17 @@ export const isPercentage = (value: number): boolean => {
 // 字符串驗證
 // ============================================================================
 
-export const isEmail = (value: string): boolean => {
+const isEmail = (value: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return isString(value) && emailRegex.test(value);
 };
 
-export const isPhone = (value: string): boolean => {
+const isPhone = (value: string): boolean => {
   const phoneRegex = /^1[3-9]\d{9}$/; // 中國手機號
   return isString(value) && phoneRegex.test(value);
 };
 
-export const isIDCard = (value: string): boolean => {
+const isIDCard = (value: string): boolean => {
   // 簡化的 ID 卡檢查
   return isString(value) && (value.length === 18 || value.length === 15);
 };
@@ -86,7 +86,7 @@ export const isIDCard = (value: string): boolean => {
 // 日期驗證
 // ============================================================================
 
-export const isValidDate = (date: any): boolean => {
+const isValidDate = (date: any): boolean => {
   if (date instanceof Date) {
     return !isNaN(date.getTime());
   }
@@ -96,13 +96,13 @@ export const isValidDate = (date: any): boolean => {
   return false;
 };
 
-export const isDateBefore = (date1: Date | string, date2: Date | string): boolean => {
+const isDateBefore = (date1: Date | string, date2: Date | string): boolean => {
   const d1 = typeof date1 === 'string' ? new Date(date1) : date1;
   const d2 = typeof date2 === 'string' ? new Date(date2) : date2;
   return d1.getTime() < d2.getTime();
 };
 
-export const isDateAfter = (date1: Date | string, date2: Date | string): boolean => {
+const isDateAfter = (date1: Date | string, date2: Date | string): boolean => {
   const d1 = typeof date1 === 'string' ? new Date(date1) : date1;
   const d2 = typeof date2 === 'string' ? new Date(date2) : date2;
   return d1.getTime() > d2.getTime();
@@ -112,7 +112,7 @@ export const isDateAfter = (date1: Date | string, date2: Date | string): boolean
 // API 響應驗證
 // ============================================================================
 
-export const isValidApiResponse = (response: any): boolean => {
+const isValidApiResponse = (response: any): boolean => {
   return (
     isObject(response) &&
     isNumber(response.code) &&
@@ -121,7 +121,7 @@ export const isValidApiResponse = (response: any): boolean => {
   );
 };
 
-export const isSuccessResponse = (response: any): boolean => {
+const isSuccessResponse = (response: any): boolean => {
   return isValidApiResponse(response) && response.code === 200;
 };
 
@@ -129,7 +129,7 @@ export const isSuccessResponse = (response: any): boolean => {
 // Dashboard 數據驗證
 // ============================================================================
 
-export const isValidSummaryCards = (data: any): boolean => {
+const isValidSummaryCards = (data: any): boolean => {
   return (
     isObject(data) &&
     isObject(data.monthlyExpense) &&
@@ -141,7 +141,7 @@ export const isValidSummaryCards = (data: any): boolean => {
   );
 };
 
-export const isValidExpenseTrend = (data: any): boolean => {
+const isValidExpenseTrend = (data: any): boolean => {
   return (
     isObject(data) &&
     isString(data.timeRange) &&
@@ -151,7 +151,7 @@ export const isValidExpenseTrend = (data: any): boolean => {
   );
 };
 
-export const isValidVendorScoring = (data: any): boolean => {
+const isValidVendorScoring = (data: any): boolean => {
   return (
     isObject(data) &&
     isArray(data.vendorScores) &&
@@ -159,7 +159,7 @@ export const isValidVendorScoring = (data: any): boolean => {
   );
 };
 
-export const isValidPRPOFunnel = (data: any): boolean => {
+const isValidPRPOFunnel = (data: any): boolean => {
   return (
     isObject(data) &&
     isArray(data.funnel) &&
@@ -168,7 +168,7 @@ export const isValidPRPOFunnel = (data: any): boolean => {
   );
 };
 
-export const isValidRecentOperations = (data: any): boolean => {
+const isValidRecentOperations = (data: any): boolean => {
   return (
     isObject(data) &&
     isArray(data.recentPRs) &&
@@ -181,7 +181,7 @@ export const isValidRecentOperations = (data: any): boolean => {
 // 風險等級驗證
 // ============================================================================
 
-export const isValidRiskLevel = (level: any): level is 'LOW' | 'MEDIUM' | 'HIGH' => {
+const isValidRiskLevel = (level: any): level is 'LOW' | 'MEDIUM' | 'HIGH' => {
   return isString(level) && ['LOW', 'MEDIUM', 'HIGH'].includes(level);
 };
 
@@ -189,7 +189,7 @@ export const isValidRiskLevel = (level: any): level is 'LOW' | 'MEDIUM' | 'HIGH'
 // 時間範圍驗證
 // ============================================================================
 
-export const isValidTimeRange = (range: any): range is '6MONTHS' | '12MONTHS' => {
+const isValidTimeRange = (range: any): range is '6MONTHS' | '12MONTHS' => {
   return isString(range) && ['6MONTHS', '12MONTHS'].includes(range);
 };
 
@@ -197,14 +197,14 @@ export const isValidTimeRange = (range: any): range is '6MONTHS' | '12MONTHS' =>
 // 複合驗證
 // ============================================================================
 
-export const validateRequired = (value: any, fieldName: string): { valid: boolean; error?: string } => {
+const validateRequired = (value: any, fieldName: string): { valid: boolean; error?: string } => {
   if (isEmpty(value)) {
     return { valid: false, error: `${fieldName} is required` };
   }
   return { valid: true };
 };
 
-export const validateNumber = (value: any, fieldName: string, min?: number, max?: number): { valid: boolean; error?: string } => {
+const validateNumber = (value: any, fieldName: string, min?: number, max?: number): { valid: boolean; error?: string } => {
   if (!isNumber(value)) {
     return { valid: false, error: `${fieldName} must be a number` };
   }
@@ -217,7 +217,7 @@ export const validateNumber = (value: any, fieldName: string, min?: number, max?
   return { valid: true };
 };
 
-export const validateString = (value: any, fieldName: string, minLength = 0, maxLength = Infinity): { valid: boolean; error?: string } => {
+const validateString = (value: any, fieldName: string, minLength = 0, maxLength = Infinity): { valid: boolean; error?: string } => {
   if (!isString(value)) {
     return { valid: false, error: `${fieldName} must be a string` };
   }
