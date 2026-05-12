@@ -512,7 +512,7 @@ Before delivering review reports:
 ## Related Resources
 
 - [Review Agent](../../agents/review.agent.md) - Agent definition
-- [Development Agent](../../agents/development.agent.md) - Generates implementation records
+- [Development Agent](../../agents/dev.agent.md) - Generates implementation records
 - [SD Agent](../../agents/sd.agent.md) - Creates design specs
 - [Test Agent](../../agents/test.agent.md) - Executes tests
 - [Reference Agent](../../agents/reference.agent.md) - Manages guidelines

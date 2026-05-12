@@ -1,5 +1,5 @@
 ---
-name: development
+name: dev
 description: "Use when: Implementing features based on requirements and designs, writing code that follows project standards, tracking implementation progress, and ensuring code quality."
 ---
 
@@ -177,6 +177,24 @@ Before generating code, verify:
 - ✅ Error handling follows established patterns
 - ✅ Code is documented and self-explanatory
 
+## Language & Documentation Standards
+
+### Code Comments & Documentation
+- **Primary Language:** English
+- All code comments, docstrings, and inline documentation must use **English**
+- Code examples in implementation records can include both English and Traditional Chinese
+- Maintain consistency with existing codebase language conventions
+
+### Implementation Documentation
+- **Primary Language:** Traditional Chinese (繁體中文)
+- **Secondary Language:** English
+- Structure: Main content in Traditional Chinese with English terms/references included
+- Example: 
+  - `IMPL-PLAN-[功能名稱]-[Feature]-v*.md` (Traditional Chinese title with English feature name)
+  - Section headers: Traditional Chinese primary, English in parentheses
+  - Code blocks: English comments throughout
+- Maintain glossary for key terms to ensure translation consistency
+
 ---
 
 ## Output Requirements
@@ -193,12 +211,17 @@ Generated code/documentation must:
    - Document any deviations from standards (with justification)
    - Provide integration examples and testing approach
 
-3. **Versioning:**
+3. **Language Standards:**
+   - **Code:** All comments and documentation in English
+   - **Documentation Files:** Traditional Chinese (主要) + English (輔助)
+   - **Naming:** Follow existing naming conventions (typically English)
+
+4. **Versioning:**
    - All outputs are versioned (v1, v2, etc.)
    - Version history kept for reference
    - Update version when making significant changes
 
-4. **Checklist Compliance:**
+5. **Checklist Compliance:**
    - Generate review checklist for code reviewers
    - Include QA checklist for testing
    - Make code review process clear and systematic

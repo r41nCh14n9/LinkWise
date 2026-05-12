@@ -1,5 +1,5 @@
 ---
-name: development
+name: dev
 description: "Skill for implementing features based on requirements and designs. Generates code that follows all project guidelines, uses established templates, and tracks implementation progress."
 ---
 
@@ -446,7 +446,7 @@ Tests pass, code ready for merge
 
 ## Related Resources
 
-- [Development Agent](../../agents/development.agent.md) - Agent definition
+- [Development Agent](../../agents/dev.agent.md) - Agent definition
 - [Reference Agent](../../agents/reference.agent.md) - Manages guidelines/templates
 - [Reference Skill](./reference/SKILL.md) - How to maintain guidelines
 - [Review Agent](../../agents/review.agent.md) - Conducts code/design reviews
