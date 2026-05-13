@@ -8,6 +8,13 @@ spring:
     username: ${DB_USER:linkwise_user}
     password: ${DB_PASSWORD:linkwise_password}
     driver-class-name: org.postgresql.Driver
+    
+  # SQL Initialization
+  sql:
+    init:
+      mode: never
+      data-locations: classpath:data/admin-user-init.sql
+      continue-on-error: true
 
   # JPA/Hibernate Configuration
   jpa:

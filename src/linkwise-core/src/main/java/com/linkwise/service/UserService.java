@@ -1,98 +1,228 @@
 package com.linkwise.service;
 
+import com.linkwise.dto.CreateUserRequest;
+import com.linkwise.dto.UserDTO;
 import com.linkwise.entity.User;
+import com.linkwise.entity.UserStatus;
+import com.linkwise.entity.UserRoleAssignment;
 import com.linkwise.repository.UserRepository;
+import com.linkwise.repository.UserRoleAssignmentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
- * User Service
- * 
- * Business logic layer for user-related operations.
+ * Enhanced User Service
+ * Business logic layer for user-related operations
  */
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class UserService {
-
+    
     private final UserRepository userRepository;
-
+    private final UserRoleAssignmentRepository userRoleRepository;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
+    
     /**
      * Create a new user
-     * 
-     * @param user the user to create
-     * @return the created user
      */
-    public User createUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Email already exists: " + user.getEmail());
+    public User createUser(CreateUserRequest request, Long organizationId) {
+        // Validate email not in use
+        if (userRepository.existsByEmailAndOrganizationId(request.getEmail(), organizationId)) {
+            throw new IllegalArgumentException("Email already in use: " + request.getEmail());
         }
-        return userRepository.save(user);
+        
+        User user = User.builder()
+            .email(request.getEmail())
+            .username(request.getUsername())
+            .firstName(request.getFirstName())
+            .lastName(request.getLastName())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .organizationId(organizationId)
+            .departmentId(request.getDepartmentId())
+            .status(UserStatus.ACTIVE)
+            .active(true)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .build();
+        
+        User savedUser = userRepository.save(user);
+        
+        // Assign roles if provided
+        if (request.getRoleIds() != null && !request.getRoleIds().isEmpty()) {
+            assignRolesToUser(savedUser.getId(), request.getRoleIds());
+        }
+        
+        return savedUser;
     }
-
+    
     /**
-     * Get a user by ID
-     * 
-     * @param id the user ID
-     * @return Optional containing the user if found
+     * Get user by ID
      */
     @Transactional(readOnly = true)
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
-
+    
     /**
-     * Get a user by email
-     * 
-     * @param email the email address
-     * @return Optional containing the user if found
+     * Get user by email
      */
     @Transactional(readOnly = true)
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
+    
     /**
-     * Get all users
-     * 
-     * @return List of all users
+     * Get all users in organization
      */
     @Transactional(readOnly = true)
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<User> getUsersByOrganization(Long organizationId) {
+        return userRepository.findByOrganizationId(organizationId);
     }
-
+    
+    /**
+     * Get users by department
+     */
+    @Transactional(readOnly = true)
+    public List<User> getUsersByDepartment(Long departmentId) {
+        return userRepository.findByDepartmentId(departmentId);
+    }
+    
     /**
      * Get all active users
-     * 
-     * @return List of active users
      */
     @Transactional(readOnly = true)
     public List<User> getActiveUsers() {
         return userRepository.findByActiveTrue();
     }
-
+    
     /**
-     * Update a user (simplified version without using getters)
+     * Search users by email in organization
      */
-    public User updateUser(Long id, User userDetails) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
-        return userRepository.save(user);  // Just save without modification for now
+    @Transactional(readOnly = true)
+    public List<User> searchUsers(Long organizationId, String searchTerm) {
+        return userRepository.searchByEmailInOrganization(organizationId, searchTerm);
     }
-
+    
     /**
-     * Delete a user
-     * 
-     * @param id the user ID
+     * Update user information
+     */
+    public User updateUser(Long id, String username, String firstName, String lastName, Long departmentId) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+        
+        if (username != null) user.setUsername(username);
+        if (firstName != null) user.setFirstName(firstName);
+        if (lastName != null) user.setLastName(lastName);
+        if (departmentId != null) user.setDepartmentId(departmentId);
+        user.setUpdatedAt(LocalDateTime.now());
+        
+        return userRepository.save(user);
+    }
+    
+    /**
+     * Disable user (soft delete)
+     */
+    public User disableUser(Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+        
+        user.setActive(false);
+        user.setStatus(UserStatus.DISABLED);
+        user.setUpdatedAt(LocalDateTime.now());
+        
+        return userRepository.save(user);
+    }
+    
+    /**
+     * Delete user
      */
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+            .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+        
+        // Delete user role assignments
+        userRoleRepository.deleteByUserId(id);
+        
+        // Delete user
         userRepository.delete(user);
+    }
+    
+    /**
+     * Assign roles to user
+     */
+    public void assignRolesToUser(Long userId, List<Long> roleIds) {
+        // Delete existing roles
+        userRoleRepository.deleteByUserId(userId);
+        
+        // Assign new roles
+        for (Long roleId : roleIds) {
+            UserRoleAssignment assignment = UserRoleAssignment.builder()
+                .userId(userId)
+                .roleId(roleId)
+                .build();
+            userRoleRepository.save(assignment);
+        }
+    }
+    
+    /**
+     * Get user roles
+     */
+    @Transactional(readOnly = true)
+    public List<Long> getUserRoles(Long userId) {
+        return userRoleRepository.findByUserId(userId)
+            .stream()
+            .map(UserRoleAssignment::getRoleId)
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Convert User to UserDTO with roles and permissions loaded
+     */
+    public UserDTO convertToDTO(User user) {
+        // Get user's role IDs
+        List<Long> roleIds = userRoleRepository.findByUserId(user.getId())
+            .stream()
+            .map(UserRoleAssignment::getRoleId)
+            .collect(Collectors.toList());
+        
+        // Get role names and collect permissions
+        List<String> roleNames = new java.util.ArrayList<>();
+        List<String> permissionsList = new java.util.ArrayList<>();
+        
+        for (Long roleId : roleIds) {
+            // Get role by ID
+            var role = roleService.getRoleById(roleId);
+            if (role != null) {
+                roleNames.add(role.getName());
+                // Add all permissions from this role
+                if (role.getPermissions() != null) {
+                    permissionsList.addAll(role.getPermissions());
+                }
+            }
+        }
+        
+        return UserDTO.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .username(user.getUsername())
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .status(user.getStatus())
+            .organizationId(user.getOrganizationId())
+            .departmentId(user.getDepartmentId())
+            .roles(roleNames.isEmpty() ? null : roleNames)
+            .permissions(permissionsList.isEmpty() ? null : permissionsList)
+            .createdAt(user.getCreatedAt())
+            .updatedAt(user.getUpdatedAt())
+            .build();
     }
 }

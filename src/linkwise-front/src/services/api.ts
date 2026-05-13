@@ -29,7 +29,7 @@ const DASHBOARD_ENDPOINT = `${API_BASE_URL}${API_VERSION}/dashboard`;
 
 // 創建 Axios 實例
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: DASHBOARD_ENDPOINT,
+  baseURL: '/api/v1',
   timeout: 30000, // 30 秒超時
   headers: {
     'Content-Type': 'application/json',
@@ -43,11 +43,11 @@ const axiosInstance: AxiosInstance = axios.create({
 // 請求攔截器 - 添加認證令牌
 axiosInstance.interceptors.request.use(
   (config) => {
-    // TODO: 添加認證令牌邏輯
-    // const token = localStorage.getItem('auth_token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // 從 localStorage 獲取認證令牌
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = token;
+    }
     return config;
   },
   (error) => Promise.reject(error)

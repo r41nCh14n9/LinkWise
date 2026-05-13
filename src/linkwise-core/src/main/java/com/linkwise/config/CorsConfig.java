@@ -17,17 +17,10 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 // Allow requests from frontend (development)
-                .allowedOrigins(
-                        "http://localhost",           // Frontend (no port)
-                        "http://127.0.0.1",           // Frontend (no port, 127.0.0.1)
-                        "http://localhost:3000",      // Frontend dev server
-                        "http://127.0.0.1:3000",      // Frontend dev server (127.0.0.1)
-                        "http://localhost:8080",      // Backend direct access (Swagger UI)
-                        "http://127.0.0.1:8080",      // Backend direct access
-                        "http://linkwise-frontend-dev:3000",  // Docker container
-                        "http://linkwise-nginx-dev:3000",     // Nginx proxy
-                        "http://linkwise-nginx-dev:8080",     // Nginx backend proxy
-                        "http://linkwise-backend-dev:8080"    // Backend container
+                .allowedOriginPatterns(
+                        "http://localhost:*",
+                        "http://127.0.0.1:*",
+                        "http://linkwise-*:*"
                 )
                 // Allow common HTTP methods
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
@@ -40,17 +33,10 @@ public class CorsConfig implements WebMvcConfigurer {
 
         // Additional mapping for API endpoints specifically
         registry.addMapping("/api/**")
-                .allowedOrigins(
-                        "http://localhost",
-                        "http://127.0.0.1",
-                        "http://localhost:3000",
-                        "http://127.0.0.1:3000",
-                        "http://localhost:8080",
-                        "http://127.0.0.1:8080",
-                        "http://linkwise-frontend-dev:3000",
-                        "http://linkwise-nginx-dev:3000",
-                        "http://linkwise-nginx-dev:8080",
-                        "http://linkwise-backend-dev:8080"
+                .allowedOriginPatterns(
+                        "http://localhost:*",
+                        "http://127.0.0.1:*",
+                        "http://linkwise-*:*"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")

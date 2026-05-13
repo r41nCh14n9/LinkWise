@@ -7,10 +7,12 @@ import java.time.LocalDateTime;
 /**
  * User Entity
  * 
- * Represents a user in the LinkWise platform.
+ * Represents a user in the LinkWise platform with RBAC support.
  */
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"email", "organization_id"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,10 +23,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     @Column(nullable = false)
@@ -37,8 +39,14 @@ public class User {
     private String lastName;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role;
+    @Column(name = "status")
+    private UserStatus status;
+
+    @Column(name = "organization_id")
+    private Long organizationId;
+
+    @Column(name = "department_id")
+    private Long departmentId;
 
     @Column(nullable = false)
     private Boolean active;
@@ -56,14 +64,13 @@ public class User {
         if (active == null) {
             active = true;
         }
+        if (status == null) {
+            status = UserStatus.ACTIVE;
+        }
     }
 
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    public enum UserRole {
-        ADMIN, MANAGER, STAFF, SUPPLIER, BUYER
     }
 }
