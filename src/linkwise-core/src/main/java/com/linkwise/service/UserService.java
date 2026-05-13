@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 /**
  * Enhanced User Service
- * Business logic layer for user-related operations
+ * Business logic layer for user-related operations with audit logging
  */
 @Service
 @RequiredArgsConstructor
@@ -30,6 +30,7 @@ public class UserService {
     private final UserRoleAssignmentRepository userRoleRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final AuditLogService auditLogService;
     
     /**
      * Create a new user
@@ -55,6 +56,17 @@ public class UserService {
             .build();
         
         User savedUser = userRepository.save(user);
+        
+        // Log audit - created by system (userId = 1 for system actions)
+        auditLogService.logAction(
+            1L, // System user
+            "USER",
+            savedUser.getId(),
+            "CREATE",
+            savedUser.getEmail(),
+            "User created: " + savedUser.getFirstName() + " " + savedUser.getLastName(),
+            organizationId
+        );
         
         // Assign roles if provided
         if (request.getRoleIds() != null && !request.getRoleIds().isEmpty()) {
@@ -119,13 +131,32 @@ public class UserService {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
         
+        // Keep track of old values for audit
+        String oldUsername = user.getUsername();
+        String oldFirstName = user.getFirstName();
+        String oldLastName = user.getLastName();
+        Long oldDepartmentId = user.getDepartmentId();
+        
         if (username != null) user.setUsername(username);
         if (firstName != null) user.setFirstName(firstName);
         if (lastName != null) user.setLastName(lastName);
         if (departmentId != null) user.setDepartmentId(departmentId);
         user.setUpdatedAt(LocalDateTime.now());
         
-        return userRepository.save(user);
+        User updatedUser = userRepository.save(user);
+        
+        // Log audit
+        auditLogService.logAction(
+            1L, // System user
+            "USER",
+            id,
+            "UPDATE",
+            updatedUser.getEmail(),
+            String.format("User updated - Name: %s %s", updatedUser.getFirstName(), updatedUser.getLastName()),
+            user.getOrganizationId()
+        );
+        
+        return updatedUser;
     }
     
     /**
@@ -139,7 +170,20 @@ public class UserService {
         user.setStatus(UserStatus.DISABLED);
         user.setUpdatedAt(LocalDateTime.now());
         
-        return userRepository.save(user);
+        User disabledUser = userRepository.save(user);
+        
+        // Log audit
+        auditLogService.logAction(
+            1L, // System user
+            "USER",
+            id,
+            "DISABLE",
+            user.getEmail(),
+            "User disabled",
+            user.getOrganizationId()
+        );
+        
+        return disabledUser;
     }
     
     /**
@@ -148,6 +192,17 @@ public class UserService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+        
+        // Log audit before deletion
+        auditLogService.logAction(
+            1L, // System user
+            "USER",
+            id,
+            "DELETE",
+            user.getEmail(),
+            "User deleted",
+            user.getOrganizationId()
+        );
         
         // Delete user role assignments
         userRoleRepository.deleteByUserId(id);
@@ -160,6 +215,9 @@ public class UserService {
      * Assign roles to user
      */
     public void assignRolesToUser(Long userId, List<Long> roleIds) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        
         // Delete existing roles
         userRoleRepository.deleteByUserId(userId);
         
@@ -171,6 +229,17 @@ public class UserService {
                 .build();
             userRoleRepository.save(assignment);
         }
+        
+        // Log audit
+        auditLogService.logAction(
+            1L, // System user
+            "USER_ROLE",
+            userId,
+            "ASSIGN",
+            user.getEmail(),
+            String.format("Assigned %d role(s) to user", roleIds.size()),
+            user.getOrganizationId()
+        );
     }
     
     /**

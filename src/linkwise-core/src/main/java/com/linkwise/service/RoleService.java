@@ -27,6 +27,7 @@ public class RoleService {
     private final RoleRepository roleRepository;
     private final RolePermissionRepository rolePermissionRepository;
     private final PermissionRepository permissionRepository;
+    private final AuditLogService auditLogService;
     
     /**
      * Get all builtin roles
@@ -72,13 +73,30 @@ public class RoleService {
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
             .build();
-        return roleRepository.save(role);
+        
+        Role createdRole = roleRepository.save(role);
+        
+        // Log audit
+        auditLogService.logAction(
+            1L, // System user
+            "ROLE",
+            createdRole.getId(),
+            "CREATE",
+            name,
+            String.format("Custom role created: %s", description),
+            organizationId
+        );
+        
+        return createdRole;
     }
     
     /**
-     * Assign permissions to role
+     * Assign permissions to role by permission IDs
      */
     public void assignPermissionsToRole(Long roleId, List<Long> permissionIds) {
+        Role role = roleRepository.findById(roleId)
+            .orElseThrow(() -> new RuntimeException("Role not found with ID: " + roleId));
+        
         // Delete existing permissions
         rolePermissionRepository.deleteByRoleId(roleId);
         
@@ -90,6 +108,43 @@ public class RoleService {
                 .build();
             rolePermissionRepository.save(rolePermission);
         }
+        
+        // Log audit
+        List<String> permissionCodes = permissionIds.stream()
+            .map(pId -> permissionRepository.findById(pId))
+            .filter(p -> p.isPresent())
+            .map(p -> p.get().getCode())
+            .collect(Collectors.toList());
+        
+        auditLogService.logAction(
+            1L, // System user
+            "ROLE",
+            roleId,
+            "ASSIGN_PERMISSIONS",
+            role.getName(),
+            String.format("Assigned %d permission(s) to role: %s", permissionIds.size(), String.join(", ", permissionCodes)),
+            role.getOrganizationId()
+        );
+    }
+    
+    /**
+     * Assign permissions to role by permission codes
+     */
+    public void assignPermissionsByCode(Long roleId, List<String> permissionCodes) {
+        if (permissionCodes == null || permissionCodes.isEmpty()) {
+            rolePermissionRepository.deleteByRoleId(roleId);
+            return;
+        }
+        
+        // Convert permission codes to IDs
+        List<Long> permissionIds = permissionCodes.stream()
+            .map(code -> permissionRepository.findByCode(code).orElse(null))
+            .filter(permission -> permission != null)
+            .map(Permission::getId)
+            .collect(Collectors.toList());
+        
+        // Use existing method to assign
+        assignPermissionsToRole(roleId, permissionIds);
     }
     
     /**

@@ -71,13 +71,11 @@ export const UserListPage: React.FC<{ organizationId: number }> = ({ organizatio
   };
 
   const handleDeleteUser = async (userId: number) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
-        await userService.deleteUser(userId);
-        fetchUsers();
-      } catch (err) {
-        setError('Failed to delete user');
-      }
+    try {
+      await userService.deleteUser(userId);
+      fetchUsers();
+    } catch (err) {
+      setError('Failed to delete user');
     }
   };
 

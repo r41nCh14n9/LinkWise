@@ -31,6 +31,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf().disable()
+            .cors().and()
             .authorizeHttpRequests(authz -> authz
                 // Allow public access to specific endpoints for development
                 .requestMatchers(

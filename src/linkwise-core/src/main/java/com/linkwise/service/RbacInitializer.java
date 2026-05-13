@@ -78,7 +78,7 @@ public class RbacInitializer implements CommandLineRunner {
             return;
         }
         
-        // Admin Role - All permissions
+        // Admin Role - All permissions (系统管理员)
         Role adminRole = createRole(null, "ADMIN", "System Administrator", true);
         List<Permission> allPermissions = permissionRepository.findAll();
         for (Permission permission : allPermissions) {
@@ -89,19 +89,45 @@ public class RbacInitializer implements CommandLineRunner {
             rolePermissionRepository.save(rolePermission);
         }
         
-        // Approver Role - Approval and view permissions
+        // User Role - Basic user with PR creation and reading (一般用户 - 需求申请者 + 验收者)
+        Role userRole = createRole(null, "USER", "General User", true);
+        assignPermissionsToRole(userRole, Arrays.asList(
+            "DASHBOARD_VIEW", "PR_CREATE", "PR_READ", "PR_APPROVE", "VENDOR_READ"
+        ));
+        
+        // Supervisor Role - Department management and approval (部门主管)
+        Role supervisorRole = createRole(null, "SUPERVISOR", "Supervisor", true);
+        assignPermissionsToRole(supervisorRole, Arrays.asList(
+            "DASHBOARD_VIEW", "PR_READ", "PR_APPROVE", "VENDOR_READ",
+            "DEPT_READ", "DEPT_UPDATE", "USER_READ"
+        ));
+        
+        // Agent Role - Buyer/Procurement specialist (采购专员)
+        Role agentRole = createRole(null, "AGENT", "Purchasing Agent", true);
+        assignPermissionsToRole(agentRole, Arrays.asList(
+            "DASHBOARD_VIEW", "DASHBOARD_EXPORT", "PR_CREATE", "PR_READ", "PR_DELETE",
+            "VENDOR_READ", "VENDOR_UPDATE", "VENDOR_CREATE"
+        ));
+        
+        // AP Role - Accounting/Finance (财务会计)
+        Role apRole = createRole(null, "AP", "Accounts Payable", true);
+        assignPermissionsToRole(apRole, Arrays.asList(
+            "DASHBOARD_VIEW", "DASHBOARD_EXPORT", "PR_READ", "PR_APPROVE", "VENDOR_READ"
+        ));
+        
+        // Approver Role - Approval permissions (保留用于兼容性)
         Role approverRole = createRole(null, "APPROVER", "Approver", true);
         assignPermissionsToRole(approverRole, Arrays.asList(
             "DASHBOARD_VIEW", "PR_READ", "PR_APPROVE", "VENDOR_READ"
         ));
         
-        // Buyer Role - Creation and reading permissions
+        // Buyer Role - Creation and reading permissions (保留用于兼容性)
         Role buyerRole = createRole(null, "BUYER", "Buyer", true);
         assignPermissionsToRole(buyerRole, Arrays.asList(
             "DASHBOARD_VIEW", "PR_CREATE", "PR_READ", "PR_DELETE", "VENDOR_READ", "VENDOR_UPDATE"
         ));
         
-        // Requester Role - Basic permissions
+        // Requester Role - Basic permissions (保留用于兼容性)
         Role requesterRole = createRole(null, "REQUESTER", "Requester", true);
         assignPermissionsToRole(requesterRole, Arrays.asList(
             "DASHBOARD_VIEW", "PR_CREATE", "PR_READ"

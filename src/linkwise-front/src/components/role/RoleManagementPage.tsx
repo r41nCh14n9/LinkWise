@@ -121,13 +121,11 @@ const RoleManagementPage: React.FC = () => {
   };
 
   const handleDeleteRole = async (roleId: number) => {
-    if (window.confirm('确定要删除此角色吗？')) {
-      try {
-        await roleService.deleteRole(roleId);
-        await fetchData();
-      } catch (err) {
-        setError('Failed to delete role');
-      }
+    try {
+      await roleService.deleteRole(roleId);
+      await fetchData();
+    } catch (err) {
+      setError('Failed to delete role');
     }
   };
 

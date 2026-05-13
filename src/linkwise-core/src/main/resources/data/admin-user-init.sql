@@ -1,28 +1,21 @@
 -- Admin User Initialization Script
--- This script creates a default admin user for development/staging environments
--- Default Admin Credentials:
---   Email: admin@linkwise.com
---   Username: admin
---   Password: AdminPass@2024 (hashed with BCrypt)
---   Role: ADMIN (all permissions)
---   Organization: 1 (default org)
-
--- Note: The password hash below is for "AdminPass@2024"
--- Generated via BCrypt with cost factor 10
--- To generate new hash: https://bcrypt-generator.com/ or use Spring's BCryptPasswordEncoder
+-- Updated with new role structure: Admin, User, Supervisor, Agent, AP
+-- Password: AdminPass@2024 (hashed with BCrypt, cost factor 10)
+-- All users share the same password for demo purposes
 
 -- Insert default organization if not exists
 INSERT INTO organizations (id, name, description, active, created_at, updated_at) 
 VALUES (1, 'Default Organization', 'Default organization for development', true, NOW(), NOW())
 ON CONFLICT (id) DO NOTHING;
 
--- Insert admin user if not exists
+-- ========== ADMIN ROLE ==========
+-- Admin User (系统管理员)
 INSERT INTO users (id, email, username, password, first_name, last_name, status, organization_id, department_id, active, created_at, updated_at)
 VALUES (
   1,
   'admin@linkwise.com',
   'admin',
-  '$2a$10$3VwuA7EJ5F8cL2N9M4K7UuH6QpZ1BxW2CvR8TsD3FgE9LpM0JqY3u', -- AdminPass@2024
+  '$2a$10$3VwuA7EJ5F8cL2N9M4K7UuH6QpZ1BxW2CvR8TsD3FgE9LpM0JqY3u',
   'System',
   'Administrator',
   'ACTIVE',
@@ -34,21 +27,20 @@ VALUES (
 )
 ON CONFLICT (email, organization_id) DO NOTHING;
 
--- Assign ADMIN role to the admin user
-INSERT INTO user_role_assignments (user_id, role_id, created_at)
-VALUES (1, 1, NOW())
-ON CONFLICT DO NOTHING;
+INSERT INTO user_roles (user_id, role_id)
+SELECT 1, 1
+WHERE NOT EXISTS (SELECT 1 FROM user_roles WHERE user_id = 1 AND role_id = 1);
 
--- Optional: Create demo accounts for testing different roles
--- Demo APPROVER
+-- ========== USER ROLE ==========
+-- General User (一般用户 - 需求申请者 + 验收者)
 INSERT INTO users (id, email, username, password, first_name, last_name, status, organization_id, department_id, active, created_at, updated_at)
 VALUES (
   2,
-  'approver@linkwise.com',
-  'approver',
-  '$2a$10$3VwuA7EJ5F8cL2N9M4K7UuH6QpZ1BxW2CvR8TsD3FgE9LpM0JqY3u', -- AdminPass@2024
-  'Finance',
-  'Approver',
+  'user@linkwise.com',
+  'user',
+  '$2a$10$3VwuA7EJ5F8cL2N9M4K7UuH6QpZ1BxW2CvR8TsD3FgE9LpM0JqY3u',
+  'John',
+  'User',
   'ACTIVE',
   1,
   NULL,
@@ -58,19 +50,20 @@ VALUES (
 )
 ON CONFLICT (email, organization_id) DO NOTHING;
 
-INSERT INTO user_role_assignments (user_id, role_id, created_at)
-VALUES (2, 2, NOW())
-ON CONFLICT DO NOTHING;
+INSERT INTO user_roles (user_id, role_id)
+SELECT 2, 3
+WHERE NOT EXISTS (SELECT 1 FROM user_roles WHERE user_id = 2 AND role_id = 3);
 
--- Demo BUYER
+-- ========== SUPERVISOR ROLE ==========
+-- Supervisor (部门主管)
 INSERT INTO users (id, email, username, password, first_name, last_name, status, organization_id, department_id, active, created_at, updated_at)
 VALUES (
   3,
-  'buyer@linkwise.com',
-  'buyer',
-  '$2a$10$3VwuA7EJ5F8cL2N9M4K7UuH6QpZ1BxW2CvR8TsD3FgE9LpM0JqY3u', -- AdminPass@2024
-  'Procurement',
-  'Buyer',
+  'supervisor@linkwise.com',
+  'supervisor',
+  '$2a$10$3VwuA7EJ5F8cL2N9M4K7UuH6QpZ1BxW2CvR8TsD3FgE9LpM0JqY3u',
+  'Manager',
+  'Supervisor',
   'ACTIVE',
   1,
   NULL,
@@ -80,19 +73,20 @@ VALUES (
 )
 ON CONFLICT (email, organization_id) DO NOTHING;
 
-INSERT INTO user_role_assignments (user_id, role_id, created_at)
-VALUES (3, 3, NOW())
-ON CONFLICT DO NOTHING;
+INSERT INTO user_roles (user_id, role_id)
+SELECT 3, 4
+WHERE NOT EXISTS (SELECT 1 FROM user_roles WHERE user_id = 3 AND role_id = 4);
 
--- Demo REQUESTER
+-- ========== AGENT ROLE ==========
+-- Purchasing Agent (采购专员)
 INSERT INTO users (id, email, username, password, first_name, last_name, status, organization_id, department_id, active, created_at, updated_at)
 VALUES (
   4,
-  'requester@linkwise.com',
-  'requester',
-  '$2a$10$3VwuA7EJ5F8cL2N9M4K7UuH6QpZ1BxW2CvR8TsD3FgE9LpM0JqY3u', -- AdminPass@2024
-  'Operations',
-  'Requester',
+  'agent@linkwise.com',
+  'agent',
+  '$2a$10$3VwuA7EJ5F8cL2N9M4K7UuH6QpZ1BxW2CvR8TsD3FgE9LpM0JqY3u',
+  'Peter',
+  'Agent',
   'ACTIVE',
   1,
   NULL,
@@ -102,6 +96,29 @@ VALUES (
 )
 ON CONFLICT (email, organization_id) DO NOTHING;
 
-INSERT INTO user_role_assignments (user_id, role_id, created_at)
-VALUES (4, 4, NOW())
-ON CONFLICT DO NOTHING;
+INSERT INTO user_roles (user_id, role_id)
+SELECT 4, 5
+WHERE NOT EXISTS (SELECT 1 FROM user_roles WHERE user_id = 4 AND role_id = 5);
+
+-- ========== AP ROLE ==========
+-- Accounts Payable (财务会计)
+INSERT INTO users (id, email, username, password, first_name, last_name, status, organization_id, department_id, active, created_at, updated_at)
+VALUES (
+  5,
+  'ap@linkwise.com',
+  'ap',
+  '$2a$10$3VwuA7EJ5F8cL2N9M4K7UuH6QpZ1BxW2CvR8TsD3FgE9LpM0JqY3u',
+  'Alice',
+  'Finance',
+  'ACTIVE',
+  1,
+  NULL,
+  true,
+  NOW(),
+  NOW()
+)
+ON CONFLICT (email, organization_id) DO NOTHING;
+
+INSERT INTO user_roles (user_id, role_id)
+SELECT 5, 6
+WHERE NOT EXISTS (SELECT 1 FROM user_roles WHERE user_id = 5 AND role_id = 6);

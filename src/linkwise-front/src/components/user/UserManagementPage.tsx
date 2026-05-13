@@ -96,13 +96,11 @@ const UserManagementPage: React.FC = () => {
   };
 
   const handleDeleteUser = async (userId: number) => {
-    if (window.confirm('确定要删除此用户吗？')) {
-      try {
-        await userService.deleteUser(userId);
-        await fetchData();
-      } catch (err) {
-        setError('Failed to delete user');
-      }
+    try {
+      await userService.deleteUser(userId);
+      await fetchData();
+    } catch (err) {
+      setError('Failed to delete user');
     }
   };
 

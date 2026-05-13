@@ -94,8 +94,9 @@ public class RoleController {
     @Operation(summary = "Assign permissions to role")
     public ResponseEntity<Map<String, Object>> assignPermissionsToRole(
             @PathVariable Long roleId,
-            @RequestBody Map<String, List<Long>> request) {
-        roleService.assignPermissionsToRole(roleId, request.get("permissionIds"));
+            @RequestBody Map<String, List<String>> request) {
+        List<String> permissionCodes = request.get("permissionCodes");
+        roleService.assignPermissionsByCode(roleId, permissionCodes);
         Map<String, Object> response = new HashMap<>();
         response.put("code", "SUCCESS");
         response.put("message", "Permissions assigned successfully");
